@@ -1,6 +1,7 @@
 package org.foomo.flash.managers
 {
 	import org.foomo.flash.core.Singleton;
+	import org.foomo.flash.memory.IUnloader;
 
 	public class MemoryMananager
 	{
@@ -25,7 +26,7 @@ package org.foomo.flash.managers
 
 		private static function get impl():IMemoryManager
 		{
-			if (!_impl) _impl = ILogManager(Singleton.getInstance("org.foomo.flash.managers::IMemoryManager"));
+			if (!_impl) _impl = IMemoryManager(Singleton.getInstance("org.foomo.flash.managers::IMemoryManager"));
 			return _impl;
 		}
 
@@ -44,6 +45,21 @@ package org.foomo.flash.managers
 		public static function gc():void
 		{
 			impl.gc();
+		}
+
+		public static function unload(obj:Object):void
+		{
+			impl.unload(obj);
+		}
+
+		public static function addUnloader(type:Class, unloader:IUnloader):void
+		{
+			impl.addUnloader(type, unloader);
+		}
+
+		public static function removeUnloader(type:Class):void
+		{
+			impl.removeUnloader(type);
 		}
 	}
 }

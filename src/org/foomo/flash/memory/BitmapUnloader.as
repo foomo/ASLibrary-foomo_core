@@ -14,49 +14,26 @@
 * You should have received a copy of the GNU Lesser General Public License along with
 * the foomo Opensource Framework. If not, see <http://www.gnu.org/licenses/>.
 */
-package org.foomo.flash.utils.mock
+package org.foomo.flash.memory
 {
+	import flash.display.Bitmap;
+
+	import org.foomo.flash.managers.MemoryMananager;
+
 	/**
 	 * @link    http://www.foomo.org
 	 * @license http://www.gnu.org/licenses/lgpl.txt
 	 * @author  franklin <franklin@weareinteractive.com>
 	 */
-	public class ComplexType
+	public class BitmapUnloader implements IUnloader
 	{
-		//-----------------------------------------------------------------------------------------
-		// ~ Variables
-		//-----------------------------------------------------------------------------------------
-
-		public var publicString:String = 'foobar';
-
-		public var publicStringArray:Array = ['foo', 'bar']
-
-		public var publicIntArray:Array = [1, 2, 3]
-
-		public var publicObject:Object = {foo:'bar'}
-
-		public var nestedComplexType:NestedComplexType = new NestedComplexType;
-
-		private var _privateString:String = 'foobar';
-
-		private var _readOnlyString:String = 'foobar';
-
-		private var _setOnlyString:String = 'foobar';
-
-		protected var _protectedString:String = 'foobar';
-
 		//-----------------------------------------------------------------------------------------
 		// ~ Public methods
 		//-----------------------------------------------------------------------------------------
 
-		public function get readOnlyString():String
+		public function unload(object:Object):void
 		{
-			return this._readOnlyString;
-		}
-
-		public function set setOnlyString(value:String):void
-		{
-			this._setOnlyString = value;
+			MemoryMananager.unload(Bitmap(object).bitmapData);
 		}
 	}
 }

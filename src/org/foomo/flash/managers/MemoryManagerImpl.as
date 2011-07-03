@@ -1,27 +1,44 @@
+/*
+* This file is part of the foomo Opensource Framework.
+*
+* The foomo Opensource Framework is free software: you can redistribute it
+* and/or modify it under the terms of the GNU Lesser General Public License as
+* published  by the Free Software Foundation, either version 3 of the
+* License, or (at your option) any later version.
+*
+* The foomo Opensource Framework is distributed in the hope that it will
+* be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+* of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU Lesser General Public License for more details.
+*
+* You should have received a copy of the GNU Lesser General Public License along with
+* the foomo Opensource Framework. If not, see <http://www.gnu.org/licenses/>.
+*/
 package org.foomo.flash.managers
 {
-	import flash.display.Stage;
-	import flash.events.Event;
-	import flash.events.EventDispatcher;
-	import flash.events.IEventDispatcher;
-	import flash.system.ApplicationDomain;
+	import flash.events.ErrorEvent;
 	import flash.system.System;
+	import flash.utils.getQualifiedClassName;
+	import flash.utils.getTimer;
 
-	import mx.managers.SystemManager;
-
+	import org.foomo.flash.core.IUnload;
+	import org.foomo.flash.memory.IUnloader;
 	import org.foomo.flash.utils.ClassUtil;
+	import org.foomo.flash.utils.DebugUtil;
 
-	import spark.components.ComboBox;
-
-	public class MemoryManagerImpl extends EventDispatcher
+	/**
+	 * @link    http://www.foomo.org
+	 * @license http://www.gnu.org/licenses/lgpl.txt
+	 * @author  franklin <franklin@weareinteractive.com>
+	 */
+	public class MemoryManagerImpl implements IMemoryManager
 	{
 		//-----------------------------------------------------------------------------------------
 		// ~ Variables
 		//-----------------------------------------------------------------------------------------
 
-		private var _orphans:Array;
-
-		private var _recordOrphans:Boolean = false;
+		private var _unloader:Array = new Array;
+		private var _unloaderCache:Array = new Array;
 
 		//-----------------------------------------------------------------------------------------
 		// ~ Singleton constructor
@@ -58,46 +75,71 @@ package org.foomo.flash.managers
 		public function gc():void
 		{
 			var mem0:Number = (System.totalMemory / 1024 / 1024);
+			var mem1:Number;
+			var diff:String;
+
 			try {
 				System.gc()
-			} catch (e:Error) {
-				var mem1:Number = System.totalMemory / 1024 / 1024;
-				var diff:String = Number(mem0 - mem1).toFixed(2);
+				mem1 = System.totalMemory / 1024 / 1024;
+				diff = Number(mem0 - mem1).toFixed(2);
 				LogManager.debug(MemoryMananager, 'Cleaned up {0} Mb of memory', diff);
+			} catch (e:Error) {
+				mem1 = System.totalMemory / 1024 / 1024;
+				diff = Number(mem0 - mem1).toFixed(2);
+				LogManager.warn(MemoryMananager, 'Could not clear memory! Cleared {0} Mb of memory', diff);
 			}
 		}
 
-
-		//-----------------------------------------------------------------------------------------
-		// ~ Private static methods
-		//-----------------------------------------------------------------------------------------
-
-		private function applicationEnterFrameHandler(event:Event):void
+		public function addUnloader(type:Class, unloader:IUnloader):void
 		{
-			if (this._recordOrphans) {
-				var report:String = '';
-				this._recordOrphans = false;
-
-				SystemManager.getSWFRoot(this).addEventListener(Event.ENTER_FRAME, this.applicationEnterFrameHandler);
-
-				report += '------------------------------------------------\n';
-				report += 'Got ' + this._orphans.length + ' orphans';
-				report += '------------------------------------------------';
-				LogManager.debug(MemoryMananager, report);
-
-				this._orphans = new Array;
-				this._recordOrphans = true;
-			}
+			this._unloader[getQualifiedClassName(type)] = unloader;
+			this._unloaderCache = new Array;
 		}
 
-		public function orphantEnterFrameHandler(event:Event):void
+		public function removeUnloader(type:Class):void
 		{
-			if (this._recordOrphans) {
-				var id:String = (event.target.hasOwnProperty('uid') ? event.target.uid : ClassUtil.getQualifiedName(event.target);
-				if (event.target.hasOwnProperty('numChildren')) id += ' :: ' + event.target.numChildren;
-				if (event.target.hasOwnProperty('parent')) id += ' -> ' + (event.target.parent.hasOwnProperty('uid') ? event.target.parent.uid : ClassUtil.getQualifiedName(event.target.parent));
-				this._orphans.push(id);
+			delete this._unloader[getQualifiedClassName(type)];
+			this._unloaderCache = new Array;
+		}
+
+		public function unload(obj:Object):void
+		{
+			if (obj is IUnload) IUnload(obj).unload();
+
+			var objClassName:String
+			var startTime:Number = getTimer();
+			var objUnloaderExists:Boolean = false;
+			var objName:String = getQualifiedClassName(obj);
+
+			// cache objects if neede
+			if (!this._unloaderCache[objName]) {
+				this._unloaderCache[objName] = new Array;
+				var objClassNames:Array = ClassUtil.getSuperClasses(obj);
+				objClassNames.unshift(objName);
+				for each (objClassName in objClassNames) {
+					if (this._unloader[objClassName]) {
+						try {
+							IUnloader(this._unloader[objClassName]).unload(obj);
+							this._unloaderCache[objName].push(objClassName);
+						} catch (e:ErrorEvent) {
+							LogManager.warn(MemoryMananager, 'Could not unload {0} with {1}', objClassName, getQualifiedClassName(this._unloader[objClassName]));
+						}
+					}
+				}
+			} else {
+				for each (objClassName in this._unloaderCache[objName]) {
+					if (this._unloader[objClassName]) {
+						try {
+							IUnloader(this._unloader[objClassName]).unload(obj);
+						} catch (e:ErrorEvent) {
+							LogManager.warn(MemoryMananager, 'Could not unload {0} with {1}', objClassName, getQualifiedClassName(this._unloader[objClassName]));
+						}
+					}
+				}
 			}
+
+			// log
+			LogManager.debug(MemoryMananager, 'Unloading {0} took {1} ms', objClassName, getTimer() - startTime);
 		}
 	}
 }

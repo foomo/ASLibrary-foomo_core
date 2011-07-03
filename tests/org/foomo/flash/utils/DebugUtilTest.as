@@ -16,6 +16,8 @@
 */
 package org.foomo.flash.utils
 {
+	import flash.display.MovieClip;
+
 	import flexunit.framework.Assert;
 
 	import org.foomo.flash.utils.mock.ComplexType;
@@ -63,6 +65,7 @@ package org.foomo.flash.utils
 			Assert.assertEquals('Number 13.3', DebugUtil.export(13.3));
 			Assert.assertEquals("String 'My string' (length=9)", DebugUtil.export('My string'));
 
+			//trace(DebugUtil.export(new MovieClip));
 			//trace(DebugUtil.export(['foo', 'bar']));
 			//trace(DebugUtil.export({foo:'bar', 0:13}));
 			//trace(DebugUtil.export(new ComplexType));

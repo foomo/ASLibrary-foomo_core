@@ -16,6 +16,7 @@
  */
 package org.foomo.flash.utils
 {
+	import flash.utils.describeType;
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
 
@@ -81,6 +82,38 @@ package org.foomo.flash.utils
 		{
 			if (!(instance is type)) return null;
 			return ClassUtil.callMethod(instance, method, args);
+		}
+
+		/**
+		 * @todo optimize performance
+		 * @return [{name => '', access => '', type => '', declaredBy => ''}, ...]
+		 */
+		public static function getAccessors(value:*):Array
+		{
+			var ret:Array = new Array;
+			for each (var prop:XML in describeType(value)..accessor) ret.push({name:prop.@name, access:prop.@access, type:prop.@access, declaredBy:prop.@declaredBy});
+			return ret;
+		}
+
+		/**
+		 * @todo optimize performance
+		 * @return [name => type, ...]
+		 */
+		public static function getVariables(value:*):Array
+		{
+			var ret:Array = new Array;
+			for each (var prop:XML in describeType(value)..variable) ret[prop.@name] = prop.@type;
+			return ret;
+		}
+
+		/**
+		 * @return [type, ...]
+		 */
+		public static function getSuperClasses(value:*):Array
+		{
+			var ret:Array = new Array;
+			for each (var prop:XML in describeType(value)..extendsClass) ret.push(prop.@type);
+			return ret;
 		}
 	}
 }

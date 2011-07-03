@@ -19,8 +19,7 @@ package org.foomo.flash.managers
 	import org.foomo.flash.core.Singleton;
 	import org.foomo.flash.logging.ILoggingTarget;
 	import org.foomo.flash.logging.LogLevel;
-	import org.foomo.flash.logging.TraceTarget;
-	import org.foomo.flash.utils.ClassUtil;
+	import org.foomo.flash.logging.TerminalTarget;
 
 	[Event(name="log", type="org.foomo.flash.events.LogManagerEvent")]
 
@@ -41,7 +40,7 @@ package org.foomo.flash.managers
 		// ~ Constants
 		//-----------------------------------------------------------------------------------------
 
-		public static const DEFAULT_LOGGING_TARGET:Class = TraceTarget;
+		public static const DEFAULT_LOGGING_TARGET:Class = TerminalTarget;
 
 		//-----------------------------------------------------------------------------------------
 		// ~ Static variables

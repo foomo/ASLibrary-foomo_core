@@ -40,6 +40,7 @@ package org.foomo.flash.utils
 
 		/**
 		 * Returns a human readable object description
+		 * Note: you should not use this in production mode as it costs time to reflect
 		 */
 		public static function export(obj:Object):String
 		{
@@ -109,11 +110,8 @@ package org.foomo.flash.utils
 					break;
 				default:
 					if (type == 'object') {
-						var propList:XMLList = describeType(obj)..variable;
-						for (var i:int; i<propList.length(); i++){
-							prop = obj[propList[i].@name];
-							export += "'" + propList[i].@name + "'" + ' => ' + recursiveExport(prop, level + 1);
-						}
+						for (prop in ClassUtil.getVariables(obj)) export += "'" + prop + "'" + ' => ' + recursiveExport(obj[prop], level + 1);
+						for each (prop in ClassUtil.getAccessors(obj)) if (prop.access != 'writeonly') export += "'" + prop.name + "'" + ' => ' + recursiveExport(obj[prop.name], level + 1);
 						export = formatType(obj, className) + '\n' + indent(export.substr(0, -1)) + '\n';
 					} else {
 						trace('Unhandled type:', type, className);
