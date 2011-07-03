@@ -19,6 +19,7 @@ package org.foomo.flash.managers
 	import flash.events.EventDispatcher;
 	import flash.external.ExternalInterface;
 
+	import org.foomo.flash.events.LogManagerEvent;
 	import org.foomo.flash.logging.ILoggingTarget;
 	import org.foomo.flash.logging.LogLevel;
 	import org.foomo.flash.ui.Terminal;
@@ -141,9 +142,9 @@ package org.foomo.flash.managers
 			category = this.getCategoryName(category)
 			message =  StringUtil.substitue(message, parameters);
 
-			for each (var target:ILoggingTarget in this._loggingTargets)  {
-				target.output(target.format(category, message, level), level);
-			}
+			for each (var target:ILoggingTarget in this._loggingTargets) target.output(target.format(category, message, level), level);
+
+			this.dispatchEvent(new LogManagerEvent(LogManagerEvent.LOG, category, message, level))
 		}
 
 		//-----------------------------------------------------------------------------------------

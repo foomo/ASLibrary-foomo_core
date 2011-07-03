@@ -16,25 +16,53 @@
  */
 package org.foomo.flash.utils
 {
+	import flash.display.MovieClip;
+	import flash.display.Sprite;
+
+	import flexunit.framework.Assert;
+
 	/**
-	 * @link www.foomo.org
+	 * @link    http://www.foomo.org
 	 * @license http://www.gnu.org/licenses/lgpl.txt
-	 * @author franklin <franklin@weareinteractive.com>
+	 * @author  franklin <franklin@weareinteractive.com>
 	 */
-	public class ArrayUtil
+	public class DisplayObjectUtilTest
 	{
 		//-----------------------------------------------------------------------------------------
-		// ~ Public static methods
+		// ~ Constructor
 		//-----------------------------------------------------------------------------------------
 
-		/**
-		 *  Returns the index of the item in the Array.
-		 */
-		public static function getItemIndex(item:Object, source:Array):int
+		[Before]
+		public function setUp():void
 		{
-			var n:int = source.length;
-			for (var i:int = 0; i < n; i++) if (source[i] === item) return i;
-			return -1;
+		}
+
+		[After]
+		public function tearDown():void
+		{
+		}
+
+		[BeforeClass]
+		public static function setUpBeforeClass():void
+		{
+		}
+
+		[AfterClass]
+		public static function tearDownAfterClass():void
+		{
+		}
+
+		//-----------------------------------------------------------------------------------------
+		// ~ Test methods
+		//-----------------------------------------------------------------------------------------
+
+		[Test]
+		public function testGetParentByClass():void
+		{
+			var parent:MovieClip = new MovieClip;
+			var child:Sprite = new Sprite;
+			parent.addChild(child);
+			Assert.assertEquals(DisplayObjectUtil.getParentByClass(child, MovieClip), parent);
 		}
 	}
 }
