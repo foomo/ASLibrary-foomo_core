@@ -44,8 +44,8 @@ package org.foomo.flash.utils
 		 */
 		public static function getPackageName(value:*):String
 		{
-			var data:Array = getQualifiedClassName(value).split('::');
-			return data[0];
+			var data:Array = getQualifiedName(value).split('.').pop();
+			return (data.length > 0) ? data.join('.') : 'default';
 		}
 
 		/**
@@ -61,8 +61,7 @@ package org.foomo.flash.utils
 		 */
 		public static function getClassName(value:*):String
 		{
-			var data:Array = getQualifiedClassName(value).split('::');
-			return data[1];
+			return getQualifiedName(value).split('.').pop();
 		}
 
 		/**

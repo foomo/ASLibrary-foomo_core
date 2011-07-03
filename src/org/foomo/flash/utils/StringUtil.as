@@ -30,26 +30,35 @@ package org.foomo.flash.utils
 		/**
 		 * MyString -> myString
 		 */
-		public static function lcFirst(value:String):String
+		public static function lcFirst(string:String):String
 		{
-			return value.substr(0, 1).toLowerCase() + value.substr(1);
+			return string.substr(0, 1).toLowerCase() + string.substr(1);
 		}
 
 		/**
 		 * myString -> MyString
 		 */
-		public static function ucFirst(value:String):String
+		public static function ucFirst(string:String):String
 		{
-			return value.substr(0, 1).toUpperCase() + value.substr(1);
+			return string.substr(0, 1).toUpperCase() + string.substr(1);
+		}
+
+		/**
+		 * Prepend sth before a given string x times
+		 */
+		public static function prepend(string:String, value:String, repeat:uint=1):String
+		{
+			for (var i:int=0; i<repeat; i++) string = value + string
+			return string;
 		}
 
 		/**
 		 * usage: StringUtilss.substitue('my {0} string', ['foobar']);
 		 */
-		public static function substitue(message:String, parameters:Array):String
+		public static function substitue(string:String, parameters:Array):String
 		{
-			for (var i:int = 0; i < parameters.length; ++i) message = message.replace( "{"+i+"}", parameters[i]);
-			return message;
+			for (var i:int = 0; i < parameters.length; ++i) string = string.replace( "{"+i+"}", parameters[i]);
+			return string;
 		}
 	}
 }
