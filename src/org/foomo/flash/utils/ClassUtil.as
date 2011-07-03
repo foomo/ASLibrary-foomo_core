@@ -85,34 +85,42 @@ package org.foomo.flash.utils
 		}
 
 		/**
-		 * @todo optimize performance
 		 * @return [{name => '', access => '', type => '', declaredBy => ''}, ...]
 		 */
-		public static function getAccessors(value:*):Array
+		public static function getAccessors(description:XML):Array
 		{
 			var ret:Array = new Array;
-			for each (var prop:XML in describeType(value)..accessor) ret.push({name:prop.@name, access:prop.@access, type:prop.@access, declaredBy:prop.@declaredBy});
+			for each (var prop:XML in description..accessor) ret.push({name:prop.@name.toXMLString(), access:prop.@access.toXMLString(), type:prop.@access.toXMLString(), declaredBy:prop.@declaredBy.toXMLString()});
 			return ret;
 		}
 
 		/**
-		 * @todo optimize performance
 		 * @return [name => type, ...]
 		 */
-		public static function getVariables(value:*):Array
+		public static function getVariables(description:XML):Array
 		{
 			var ret:Array = new Array;
-			for each (var prop:XML in describeType(value)..variable) ret[prop.@name] = prop.@type;
+			for each (var prop:XML in description..variable) ret[prop.@name.toXMLString()] = prop.@type.toXMLString();
 			return ret;
 		}
 
 		/**
 		 * @return [type, ...]
 		 */
-		public static function getSuperClasses(value:*):Array
+		public static function getSuperClasses(description:XML):Array
 		{
 			var ret:Array = new Array;
-			for each (var prop:XML in describeType(value)..extendsClass) ret.push(prop.@type);
+			for each (var prop:XML in description..extendsClass) ret.push(prop.@type.toXMLString());
+			return ret;
+		}
+
+		/**
+		 * @return [type, ...]
+		 */
+		public static function getInterfaces(description:XML):Array
+		{
+			var ret:Array = new Array;
+			for each (var prop:XML in description..implementsInterface) ret.push(prop.@type.toXMLString());
 			return ret;
 		}
 	}

@@ -18,13 +18,11 @@ package org.foomo.flash.managers
 {
 	import flash.events.ErrorEvent;
 	import flash.system.System;
+	import flash.utils.describeType;
 	import flash.utils.getQualifiedClassName;
-	import flash.utils.getTimer;
 
-	import org.foomo.flash.core.IUnload;
 	import org.foomo.flash.memory.IUnloader;
 	import org.foomo.flash.utils.ClassUtil;
-	import org.foomo.flash.utils.DebugUtil;
 
 	/**
 	 * @link    http://www.foomo.org
@@ -104,18 +102,16 @@ package org.foomo.flash.managers
 
 		public function unload(obj:Object):void
 		{
-			if (obj is IUnload) IUnload(obj).unload();
-
 			var objClassName:String
-			var startTime:Number = getTimer();
 			var objUnloaderExists:Boolean = false;
 			var objName:String = getQualifiedClassName(obj);
 
 			// cache objects if neede
 			if (!this._unloaderCache[objName]) {
 				this._unloaderCache[objName] = new Array;
-				var objClassNames:Array = ClassUtil.getSuperClasses(obj);
-				objClassNames.unshift(objName);
+				var objDescription:XML = describeType(obj);
+				var objClassNames:Array = ClassUtil.getInterfaces(objDescription)
+				objClassName.concat(ClassUtil.getSuperClasses(objDescription).unshift(objName));
 				for each (objClassName in objClassNames) {
 					if (this._unloader[objClassName]) {
 						try {
@@ -137,9 +133,6 @@ package org.foomo.flash.managers
 					}
 				}
 			}
-
-			// log
-			LogManager.debug(MemoryMananager, 'Unloading {0} took {1} ms', objClassName, getTimer() - startTime);
 		}
 	}
 }

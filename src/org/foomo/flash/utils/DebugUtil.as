@@ -21,6 +21,8 @@ package org.foomo.flash.utils
 
 	import mx.utils.ObjectUtil;
 
+	import org.foomo.flash.managers.LogManager;
+
 	/**
 	 * @link    http://www.foomo.org
 	 * @license http://www.gnu.org/licenses/lgpl.txt
@@ -110,11 +112,12 @@ package org.foomo.flash.utils
 					break;
 				default:
 					if (type == 'object') {
-						for (prop in ClassUtil.getVariables(obj)) export += "'" + prop + "'" + ' => ' + recursiveExport(obj[prop], level + 1);
-						for each (prop in ClassUtil.getAccessors(obj)) if (prop.access != 'writeonly') export += "'" + prop.name + "'" + ' => ' + recursiveExport(obj[prop.name], level + 1);
+						var objDescription:XML = describeType(obj);
+						for (prop in ClassUtil.getVariables(objDescription)) export += "'" + prop + "'" + ' => ' + recursiveExport(obj[prop], level + 1);
+						for each (prop in ClassUtil.getAccessors(objDescription)) if (prop.access != 'writeonly') export += "'" + prop.name + "'" + ' => ' + recursiveExport(obj[prop.name], level + 1);
 						export = formatType(obj, className) + '\n' + indent(export.substr(0, -1)) + '\n';
 					} else {
-						trace('Unhandled type:', type, className);
+						LogManager.warn(LogManager, 'Unhandled type: {0} | {1}', type, className);
 					}
 					break;
 			}

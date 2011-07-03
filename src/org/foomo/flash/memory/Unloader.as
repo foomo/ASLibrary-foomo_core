@@ -23,6 +23,7 @@ package org.foomo.flash.memory
 	import flash.display.Loader;
 	import flash.display.MovieClip;
 
+	import org.foomo.flash.core.IUnload;
 	import org.foomo.flash.managers.MemoryMananager;
 
 	/**
@@ -36,6 +37,10 @@ package org.foomo.flash.memory
 	 */
 	public class Unloader
 	{
+		//-----------------------------------------------------------------------------------------
+		// ~ Public static methods
+		//-----------------------------------------------------------------------------------------
+
 		/**
 		 * Shortcut to include all basic unloader
 		 */
@@ -45,8 +50,23 @@ package org.foomo.flash.memory
 			MemoryMananager.addUnloader(Bitmap, new BitmapUnloader);
 			MemoryMananager.addUnloader(DisplayObjectContainer, new DisplayObjectContainerUnloader);
 			MemoryMananager.addUnloader(DisplayObject, new DisplayObjectUnloader);
+			MemoryMananager.addUnloader(IUnload, new IUnloadUnloader);
 			MemoryMananager.addUnloader(Loader, new LoaderUnloader);
 			MemoryMananager.addUnloader(MovieClip, new MovieClipUnloader);
+		}
+
+		/**
+		 * Shortcut to remove all basic unloader
+		 */
+		public static function removeAll():void
+		{
+			MemoryMananager.removeUnloader(BitmapData);
+			MemoryMananager.removeUnloader(Bitmap);
+			MemoryMananager.removeUnloader(DisplayObjectContainer);
+			MemoryMananager.removeUnloader(DisplayObject);
+			MemoryMananager.removeUnloader(IUnload);
+			MemoryMananager.removeUnloader(Loader);
+			MemoryMananager.removeUnloader(MovieClip);
 		}
 	}
 }
