@@ -36,7 +36,6 @@ package org.foomo
 		public var test2:org.foomo.flash.utils.ClassUtilTest;
 		public var test3:org.foomo.flash.utils.DisplayObjectContainerUtilTest;
 		public var test4:org.foomo.flash.utils.DisplayObjectUtilTest;
-		public var test4:org.foomo.flash.utils.DebugUtilTest;
-
+		public var test5:org.foomo.flash.utils.DebugUtilTest;
 	}
 }

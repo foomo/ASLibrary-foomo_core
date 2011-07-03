@@ -16,6 +16,8 @@
 */
 package org.foomo.flash.utils
 {
+	import flexunit.framework.Assert;
+
 	import org.foomo.flash.utils.mock.ComplexType;
 
 	/**
@@ -56,19 +58,14 @@ package org.foomo.flash.utils
 		[Test]
 		public function testExport():void
 		{
-			var assocArray:Array = [];
-			assocArray['foo'] = 'bar'
-			assocArray['bar'] = 'foo';
+			Assert.assertEquals('Boolean true', DebugUtil.export(true));
+			Assert.assertEquals('int 13', DebugUtil.export(13));
+			Assert.assertEquals('Number 13.3', DebugUtil.export(13.3));
+			Assert.assertEquals("String 'My string' (length=9)", DebugUtil.export('My string'));
 
-			trace(DebugUtil.export(true));
-			trace(DebugUtil.export(13));
-			trace(DebugUtil.export(13.3));
-			trace(DebugUtil.export('My string'));
-			trace(DebugUtil.export(['foo', 'bar']));
-			trace(DebugUtil.export(assocArray));
-			trace(DebugUtil.export({foo:'bar', 0:13}));
-			trace(DebugUtil.export(new ComplexType));
-
+			//trace(DebugUtil.export(['foo', 'bar']));
+			//trace(DebugUtil.export({foo:'bar', 0:13}));
+			//trace(DebugUtil.export(new ComplexType));
 		}
 	}
 }
