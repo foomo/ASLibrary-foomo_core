@@ -14,28 +14,15 @@
 * You should have received a copy of the GNU Lesser General Public License along with
 * the foomo Opensource Framework. If not, see <http://www.gnu.org/licenses/>.
 */
-package org.foomo
+package org.foomo.memory
 {
-	import org.foomo.utils.ArrayUtilTest;
-	import org.foomo.utils.ClassUtilTest;
-	import org.foomo.utils.DebugUtilTest;
-	import org.foomo.utils.DisplayObjectContainerUtilTest;
-	import org.foomo.utils.DisplayObjectUtilTest;
-
-	[Suite]
-	[RunWith("org.flexunit.runners.Suite")]
-
 	/**
 	 * @link    http://www.foomo.org
 	 * @license http://www.gnu.org/licenses/lgpl.txt
 	 * @author  franklin <franklin@weareinteractive.com>
 	 */
-	public class FoomoTestSuite
+	public interface IUnloader
 	{
-		public var test1:org.foomo.utils.ArrayUtilTest;
-		public var test2:org.foomo.utils.ClassUtilTest;
-		public var test3:org.foomo.utils.DisplayObjectContainerUtilTest;
-		public var test4:org.foomo.utils.DisplayObjectUtilTest;
-		public var test5:org.foomo.utils.DebugUtilTest;
+		function unload(object:Object):void;
 	}
 }
