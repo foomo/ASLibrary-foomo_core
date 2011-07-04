@@ -2,13 +2,13 @@ package org.foomo.flash.managers
 {
 	import org.foomo.flash.core.Singleton;
 
-	public class SharedOjectManager
+	public class SessionManager
 	{
 		//-----------------------------------------------------------------------------------------
 		// ~ Static initialization
 		//-----------------------------------------------------------------------------------------
 
-		Singleton.registerClass('org.foomo.flash.managers::ISharedObjectManager', SharedObjectManagerImpl);
+		Singleton.registerClass('org.foomo.flash.managers::ISharedObjectManager', SessionManagerImpl);
 
 		//-----------------------------------------------------------------------------------------
 		// ~ Static variables
@@ -17,19 +17,19 @@ package org.foomo.flash.managers
 		/**
 		 * @private
 		 */
-		private static var _impl:ISharedObjectManager;
+		private static var _impl:ISessionManager;
 
 		//-----------------------------------------------------------------------------------------
 		// ~ Singleton instance
 		//-----------------------------------------------------------------------------------------
 
-		private static function get impl():ISharedObjectManager
+		private static function get impl():ISessionManager
 		{
-			if (!_impl) _impl = ISharedObjectManager(Singleton.getInstance("org.foomo.flash.managers::ISharedObjectManager"));
+			if (!_impl) _impl = ISessionManager(Singleton.getInstance("org.foomo.flash.managers::ISharedObjectManager"));
 			return _impl;
 		}
 
-		public static function getInstance():ISharedObjectManager
+		public static function getInstance():ISessionManager
 		{
 			return impl;
 		}
@@ -53,24 +53,29 @@ package org.foomo.flash.managers
 			return impl.localIsAvailable;
 		}
 
-		public static function setLocalData(key:*, value:*):void
+		public static function setLocalData(key:Object, value:*):*
 		{
-			impl.setLocalData(key, value);
+			return impl.setLocalData(key, value);
 		}
 
-		public static function getLocalData(key:*):*
+		public static function getLocalData(key:Object, defaultValue:*=null):*
 		{
-			return impl.getLocalData(key);
+			return impl.getLocalData(key, defaultValue);
 		}
 
-		public static function removeLocalData(key:*):*
+		public static function removeLocalData(key:Object):*
 		{
-			return removeLocalData(key);
+			return impl.removeLocalData(key);
 		}
 
 		public static function flushLocal():String
 		{
 			return impl.flushLocal()
+		}
+
+		public static function clearLocal():void
+		{
+			return impl.clearLocal();
 		}
 	}
 }

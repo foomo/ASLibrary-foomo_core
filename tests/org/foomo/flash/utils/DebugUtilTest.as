@@ -20,7 +20,7 @@ package org.foomo.flash.utils
 
 	import flexunit.framework.Assert;
 
-	import org.foomo.flash.utils.mock.ComplexType;
+	import org.foomo.flash.mock.ComplexType;
 
 	/**
 	 * @link    http://www.foomo.org

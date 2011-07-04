@@ -3,17 +3,18 @@ package org.foomo.flash.managers
 	import flash.events.EventDispatcher;
 	import flash.net.SharedObject;
 
+	import org.foomo.flash.utils.ClassUtil;
 	import org.foomo.flash.utils.UIDUtil;
 
-	public class SharedObjectManagerImpl implements ISharedObjectManager
+	public class SessionManagerImpl implements ISessionManager
 	{
 		//-----------------------------------------------------------------------------------------
 		// ~ Constants
 		//-----------------------------------------------------------------------------------------
 
-		public static var SESSION_NAME:String = 'org.foomo.flash.managers.SessionManager';
-		public static var STORAGE_PATH:String = '/';
-		public static var SECURE:Boolean = true;
+		public static var name:String = 'org.foomo.flash.managers.SessionManager';
+		public static var localPath:String = null;
+		public static var secure:Boolean = false;
 
 		//-----------------------------------------------------------------------------------------
 		// ~ Variables
@@ -23,7 +24,7 @@ package org.foomo.flash.managers
 
 		private var _localIsAvailable:Boolean;
 
-		private var _localObject:SharedObject;
+		private var _localObject:Object;
 
 		//-----------------------------------------------------------------------------------------
 		// ~ Singleton constructor
@@ -32,18 +33,18 @@ package org.foomo.flash.managers
 		/**
 		 *  @private
 		 */
-		private static var _instance:ISharedObjectManager;
+		private static var _instance:ISessionManager;
 
 		/**
 		 * @private
 		 */
-		public function SharedObjectManagerImpl()
+		public function SessionManagerImpl()
 		{
 			this._sessionId = UIDUtil.create();
 
 			try {
-				this._localObject = SharedObject.getLocal(SESSION_NAME, STORAGE_PATH, SECURE);
-				if (!this._localObject.hasOwnProperty('clientId')) this._localObject.data.__clientId = UIDUtil.create();
+				this._localObject = SharedObject.getLocal(name, localPath, secure);
+				if (this.getLocalData(name) == null) this.setLocalData(name, UIDUtil.create());
 				this._localObject.flush();
 				this._localIsAvailable = true;
 			} catch (e:Error) {
@@ -55,9 +56,9 @@ package org.foomo.flash.managers
 		/**
 		 * @private
 		 */
-		public static function getInstance():ISharedObjectManager
+		public static function getInstance():ISessionManager
 		{
-			if (!_instance) _instance = new MemoryManagerImpl();
+			if (!_instance) _instance = new SessionManagerImpl();
 			return _instance;
 		}
 
@@ -79,7 +80,7 @@ package org.foomo.flash.managers
 		 */
 		public function get clientId():String
 		{
-			return (this.localIsAvailable) ? this._localObject.data.__clientId : this.sessionId;
+			return (this.localIsAvailable) ? this.getLocalData(name) : this.sessionId;
 		}
 
 		/**
@@ -90,21 +91,41 @@ package org.foomo.flash.managers
 			return this._sessionId;
 		}
 
-		public function setLocalData(key:*, value:*):void
+		public function setLocalData(key:Object, value:*):*
 		{
-			this._localObject.data[key] = value;
+			key = (key is String) ? key : ClassUtil.getQualifiedName(key);
+			return this._localObject.data[key] = value;
 		}
 
-		public function getLocalData(key:*):*
+		public function getLocalData(key:Object, defaultValue:*=null):*
 		{
-			return this._localObject.data[key];
+			key = (key is String) ? key : ClassUtil.getQualifiedName(key);
+			if (this._localObject.data.hasOwnProperty(key)) {
+				return this._localObject.data[key];
+			} else if (defaultValue != null) {
+				return this.setLocalData(key, defaultValue);
+			} else {
+				return null;
+			}
 		}
 
-		public function removeLocalData(key:*):*
+		public function removeLocalData(key:Object):*
 		{
+			if (!this._localObject.data.hasOwnProperty(key)) return null;
 			var value:* = this._localObject.data[key];
 			delete this._localObject.data[key];
 			return value;
+		}
+
+		public function clearLocal():void
+		{
+			var clientId:String = this.clientId;
+			if (this.localIsAvailable) {
+				this._localObject.clear();
+			} else {
+				this._localObject = {data:{}}
+			}
+			this.setLocalData(name, clientId);
 		}
 
 		public function flushLocal():String
