@@ -18,6 +18,8 @@ package org.foomo.flash.memory
 {
 	import org.foomo.flash.core.IUnload;
 
+	[ExcludeClass]
+
 	/**
 	 * @link    http://www.foomo.org
 	 * @license http://www.gnu.org/licenses/lgpl.txt
@@ -31,7 +33,7 @@ package org.foomo.flash.memory
 
 		public function unload(object:Object):void
 		{
-			IUnload(object).unload();
+			object.unload();
 		}
 	}
 }

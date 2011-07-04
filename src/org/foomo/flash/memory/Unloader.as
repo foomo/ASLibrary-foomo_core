@@ -16,20 +16,12 @@
 */
 package org.foomo.flash.memory
 {
-	import flash.display.Bitmap;
-	import flash.display.BitmapData;
-	import flash.display.DisplayObject;
-	import flash.display.DisplayObjectContainer;
-	import flash.display.Loader;
-	import flash.display.MovieClip;
-
-	import org.foomo.flash.core.IUnload;
 	import org.foomo.flash.managers.MemoryMananager;
 
 	/**
 	 * This offers a shortcut to add all common unloader
-	 * Note: using this method could mean that you will compile some classes
-	 * into you project you might otherwise wouldn't need. So be aware of this!
+	 * NOTE: I am not using the actual classes as I don't wont to link them into
+	 * the swf if they are not needed
 	 *
 	 * @link    http://www.foomo.org
 	 * @license http://www.gnu.org/licenses/lgpl.txt
@@ -46,13 +38,13 @@ package org.foomo.flash.memory
 		 */
 		public static function addAll():void
 		{
-			MemoryMananager.addUnloader(BitmapData, new BitmapDataUnloader);
-			MemoryMananager.addUnloader(Bitmap, new BitmapUnloader);
-			MemoryMananager.addUnloader(DisplayObjectContainer, new DisplayObjectContainerUnloader);
-			MemoryMananager.addUnloader(DisplayObject, new DisplayObjectUnloader);
-			MemoryMananager.addUnloader(IUnload, new IUnloadUnloader);
-			MemoryMananager.addUnloader(Loader, new LoaderUnloader);
-			MemoryMananager.addUnloader(MovieClip, new MovieClipUnloader);
+			MemoryMananager.addUnloader('flash.display::BitmapData', new BitmapDataUnloader);
+			MemoryMananager.addUnloader('flash.display::Bitmap', new BitmapUnloader);
+			MemoryMananager.addUnloader('flash.display::DisplayObjectContainer', new DisplayObjectContainerUnloader);
+			MemoryMananager.addUnloader('flash.display::DisplayObject', new DisplayObjectUnloader);
+			MemoryMananager.addUnloader('org.foomo.flash.core::IUnload', new IUnloadUnloader);
+			MemoryMananager.addUnloader('flash.display::Loader', new LoaderUnloader);
+			MemoryMananager.addUnloader('flash.display::MovieClip', new MovieClipUnloader);
 		}
 
 		/**
@@ -60,13 +52,13 @@ package org.foomo.flash.memory
 		 */
 		public static function removeAll():void
 		{
-			MemoryMananager.removeUnloader(BitmapData);
-			MemoryMananager.removeUnloader(Bitmap);
-			MemoryMananager.removeUnloader(DisplayObjectContainer);
-			MemoryMananager.removeUnloader(DisplayObject);
-			MemoryMananager.removeUnloader(IUnload);
-			MemoryMananager.removeUnloader(Loader);
-			MemoryMananager.removeUnloader(MovieClip);
+			MemoryMananager.removeUnloader('flash.display::BitmapData');
+			MemoryMananager.removeUnloader('flash.display::Bitmap');
+			MemoryMananager.removeUnloader('flash.display::DisplayObjectContainer');
+			MemoryMananager.removeUnloader('flash.display::DisplayObject');
+			MemoryMananager.removeUnloader('org.foomo.flash.core::IUnload');
+			MemoryMananager.removeUnloader('flash.display::Loader');
+			MemoryMananager.removeUnloader('flash.display::MovieClip');
 		}
 	}
 }

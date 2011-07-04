@@ -1,15 +1,14 @@
 package org.foomo.flash.managers
 {
 	import org.foomo.flash.core.Singleton;
-	import org.foomo.flash.memory.IUnloader;
 
-	public class MemoryMananager
+	public class SharedOjectManager
 	{
 		//-----------------------------------------------------------------------------------------
 		// ~ Static initialization
 		//-----------------------------------------------------------------------------------------
 
-		Singleton.registerClass('org.foomo.flash.managers::IMemoryManager', MemoryManagerImpl);
+		Singleton.registerClass('org.foomo.flash.managers::ISharedObjectManager', SharedObjectManagerImpl);
 
 		//-----------------------------------------------------------------------------------------
 		// ~ Static variables
@@ -18,22 +17,19 @@ package org.foomo.flash.managers
 		/**
 		 * @private
 		 */
-		private static var _impl:IMemoryManager;
+		private static var _impl:ISharedObjectManager;
 
 		//-----------------------------------------------------------------------------------------
 		// ~ Singleton instance
 		//-----------------------------------------------------------------------------------------
 
-		private static function get impl():IMemoryManager
+		private static function get impl():ISharedObjectManager
 		{
-			if (!_impl) _impl = IMemoryManager(Singleton.getInstance("org.foomo.flash.managers::IMemoryManager"));
+			if (!_impl) _impl = ISharedObjectManager(Singleton.getInstance("org.foomo.flash.managers::ISharedObjectManager"));
 			return _impl;
 		}
 
-		/**
-		 * @return ILogManager
-		 */
-		public static function getInstance():IMemoryManager
+		public static function getInstance():ISharedObjectManager
 		{
 			return impl;
 		}
@@ -42,24 +38,39 @@ package org.foomo.flash.managers
 		// ~ Public static methods
 		//-----------------------------------------------------------------------------------------
 
-		public static function gc():void
+		public static function get sessionId():String
 		{
-			impl.gc();
+			return impl.sessionId
 		}
 
-		public static function unload(obj:Object):void
+		public static  function get clientId():String
 		{
-			impl.unload(obj);
+			return impl.clientId;
 		}
 
-		public static function addUnloader(type:*, unloader:IUnloader):void
+		public static function get localIsAvailable():Boolean
 		{
-			impl.addUnloader(type, unloader);
+			return impl.localIsAvailable;
 		}
 
-		public static function removeUnloader(type:*):void
+		public static function setLocalData(key:*, value:*):void
 		{
-			impl.removeUnloader(type);
+			impl.setLocalData(key, value);
+		}
+
+		public static function getLocalData(key:*):*
+		{
+			return impl.getLocalData(key);
+		}
+
+		public static function removeLocalData(key:*):*
+		{
+			return removeLocalData(key);
+		}
+
+		public static function flushLocal():String
+		{
+			return impl.flushLocal()
 		}
 	}
 }

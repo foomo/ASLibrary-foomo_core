@@ -6,7 +6,7 @@ package org.foomo.flash.managers
 	{
 		function gc():void;
 		function unload(obj:Object):void;
-		function addUnloader(type:Class, unloader:IUnloader):void;
-		function removeUnloader(type:Class):void;
+		function addUnloader(type:*, unloader:IUnloader):void;
+		function removeUnloader(type:*):void;
 	}
 }

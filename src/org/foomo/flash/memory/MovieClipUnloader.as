@@ -16,7 +16,7 @@
 */
 package org.foomo.flash.memory
 {
-	import flash.display.MovieClip;
+	[ExcludeClass]
 
 	/**
 	 * @link    http://www.foomo.org
@@ -31,7 +31,7 @@ package org.foomo.flash.memory
 
 		public function unload(object:Object):void
 		{
-			MovieClip(object).stop();
+			object.stop();
 		}
 	}
 }

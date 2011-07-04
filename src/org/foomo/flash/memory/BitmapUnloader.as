@@ -16,9 +16,9 @@
 */
 package org.foomo.flash.memory
 {
-	import flash.display.Bitmap;
-
 	import org.foomo.flash.managers.MemoryMananager;
+
+	[ExcludeClass]
 
 	/**
 	 * @link    http://www.foomo.org
@@ -33,7 +33,7 @@ package org.foomo.flash.memory
 
 		public function unload(object:Object):void
 		{
-			MemoryMananager.unload(Bitmap(object).bitmapData);
+			MemoryMananager.unload(object.bitmapData);
 		}
 	}
 }

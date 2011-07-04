@@ -88,15 +88,17 @@ package org.foomo.flash.managers
 			}
 		}
 
-		public function addUnloader(type:Class, unloader:IUnloader):void
+		public function addUnloader(type:*, unloader:IUnloader):void
 		{
-			this._unloader[getQualifiedClassName(type)] = unloader;
+			type = (type is String) ? type : getQualifiedClassName(type);
+			this._unloader[type] = unloader;
 			this._unloaderCache = new Array;
 		}
 
-		public function removeUnloader(type:Class):void
+		public function removeUnloader(type:*):void
 		{
-			delete this._unloader[getQualifiedClassName(type)];
+			type = (type is String) ? type : getQualifiedClassName(type);
+			delete this._unloader[type];
 			this._unloaderCache = new Array;
 		}
 
@@ -109,9 +111,12 @@ package org.foomo.flash.managers
 			// cache objects if neede
 			if (!this._unloaderCache[objName]) {
 				this._unloaderCache[objName] = new Array;
+				var propXML:XML;
 				var objDescription:XML = describeType(obj);
-				var objClassNames:Array = ClassUtil.getInterfaces(objDescription)
-				objClassName.concat(ClassUtil.getSuperClasses(objDescription).unshift(objName));
+				var objClassNames:Array = new Array;
+				for each (propXML in objDescription..implementsInterface) objClassNames.push(propXML.@type.toXMLString());
+				objClassNames.push(objName);
+				for each (propXML in objDescription..extendsClass) objClassNames.push(propXML.@type.toXMLString());
 				for each (objClassName in objClassNames) {
 					if (this._unloader[objClassName]) {
 						try {

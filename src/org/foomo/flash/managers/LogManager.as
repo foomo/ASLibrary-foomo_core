@@ -40,7 +40,8 @@ package org.foomo.flash.managers
 		// ~ Constants
 		//-----------------------------------------------------------------------------------------
 
-		public static const DEFAULT_LOGGING_TARGET:Class = TerminalTarget;
+		public static var DEFAULT_LOG_LEVEL:int = LogLevel.WARN;
+		public static var DEFAULT_LOGGING_TARGET:Class = TerminalTarget;
 
 		//-----------------------------------------------------------------------------------------
 		// ~ Static variables
@@ -61,9 +62,6 @@ package org.foomo.flash.managers
 			return _impl;
 		}
 
-		/**
-		 * @return ILogManager
-		 */
 		public static function getInstance():ILogManager
 		{
 			return impl;

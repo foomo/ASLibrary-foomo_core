@@ -16,7 +16,6 @@
 */
 package org.foomo.flash.memory
 {
-	import flash.display.DisplayObject;
 	import flash.events.Event;
 
 	import mx.managers.SystemManager;
@@ -24,6 +23,8 @@ package org.foomo.flash.memory
 	import org.foomo.flash.logging.LogLevel;
 	import org.foomo.flash.managers.LogManager;
 	import org.foomo.flash.utils.DebugUtil;
+
+	[ExcludeClass]
 
 	/**
 	 * @link    http://www.foomo.org
@@ -55,7 +56,7 @@ package org.foomo.flash.memory
 		 */
 		public function unload(object:Object):void
 		{
-			if (DisplayObjectUnloader.debug) DisplayObject(object).addEventListener(Event.ENTER_FRAME, DisplayObjectUnloader.orphantEnterFrameHandler, false, 0, true)
+			if (DisplayObjectUnloader.debug) object.addEventListener(Event.ENTER_FRAME, DisplayObjectUnloader.orphantEnterFrameHandler, false, 0, true)
 		}
 
 		//-----------------------------------------------------------------------------------------

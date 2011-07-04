@@ -42,7 +42,7 @@ package org.foomo.flash.managers
 		/**
 		 * Current log level
 		 */
-		private var _level:int = LogLevel.ALL;
+		private var _level:int;
 		/**
 		 * Current logging targets
 		 */
@@ -62,6 +62,7 @@ package org.foomo.flash.managers
 		 */
 		public function LogManagerImpl()
 		{
+			this._level = LogManager.DEFAULT_LOG_LEVEL;
 			this.addLoggingTarget(new LogManager.DEFAULT_LOGGING_TARGET);
 		}
 

@@ -14,29 +14,25 @@
 * You should have received a copy of the GNU Lesser General Public License along with
 * the foomo Opensource Framework. If not, see <http://www.gnu.org/licenses/>.
 */
-package org.foomo.flash.memory
+package org.foomo.flash.utils
 {
-	import org.foomo.flash.managers.MemoryMananager;
-
-	[ExcludeClass]
-
 	/**
 	 * @link    http://www.foomo.org
 	 * @license http://www.gnu.org/licenses/lgpl.txt
 	 * @author  franklin <franklin@weareinteractive.com>
 	 */
-	public class DisplayObjectContainerUnloader implements IUnloader
+	public class CompilerUtil
 	{
 		//-----------------------------------------------------------------------------------------
-		// ~ Public methods
+		// ~ Public static methods
 		//-----------------------------------------------------------------------------------------
 
 		/**
-		 * Removes all children and unloads them too
+		 * Force compiler to include given class
 		 */
-		public function unload(object:Object):void
+		public static function force(value:Class):void
 		{
-			while (object.numChildren > 0) MemoryMananager.unload(object.removeChildAt(0));
+			// just a nice way to do it
 		}
 	}
 }

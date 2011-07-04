@@ -105,6 +105,10 @@ package org.foomo.flash.utils
 				case 'String':
 					export += className + " " + formatType(obj, className) + " (length=" + (obj as String).length + ")\n";
 					break;
+				case 'XML':
+				case 'XMLList':
+					export += className + "\n" + obj.toXMLString() + "\n";
+					break;
 				case 'Array':
 				case 'Object':
 					for (prop in obj) export += formatType(prop, ClassUtil.getQualifiedName(prop)) + ' => ' + recursiveExport(obj[prop], level + 1);
@@ -112,9 +116,10 @@ package org.foomo.flash.utils
 					break;
 				default:
 					if (type == 'object') {
+						var propXML:XML
 						var objDescription:XML = describeType(obj);
-						for (prop in ClassUtil.getVariables(objDescription)) export += "'" + prop + "'" + ' => ' + recursiveExport(obj[prop], level + 1);
-						for each (prop in ClassUtil.getAccessors(objDescription)) if (prop.access != 'writeonly') export += "'" + prop.name + "'" + ' => ' + recursiveExport(obj[prop.name], level + 1);
+						for each (propXML in objDescription..variable) export += "'" + propXML.@type.toXMLString() + "'" + ' => ' + recursiveExport(obj[propXML.@type.toXMLString()], level + 1);
+						for each (propXML in objDescription..accessor) if (prop.access != 'writeonly') export += "'" + propXML.@name.toXMLString() + "'" + ' => ' + recursiveExport(obj[propXML.@name.toXMLString()], level + 1);
 						export = formatType(obj, className) + '\n' + indent(export.substr(0, -1)) + '\n';
 					} else {
 						LogManager.warn(LogManager, 'Unhandled type: {0} | {1}', type, className);
