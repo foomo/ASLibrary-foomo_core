@@ -61,7 +61,7 @@ package org.foomo.managers
 		public function LogManagerImpl()
 		{
 			this._level = LogManager.DEFAULT_LOG_LEVEL;
-			this.addLoggingTarget(new org.foomo.managers.LogManager);
+			this.addLoggingTarget(new LogManager.DEFAULT_LOGGING_TARGET);
 		}
 
 		/**
