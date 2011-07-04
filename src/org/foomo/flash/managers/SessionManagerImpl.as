@@ -22,6 +22,8 @@ package org.foomo.flash.managers
 	import org.foomo.flash.utils.ClassUtil;
 	import org.foomo.flash.utils.UIDUtil;
 
+	[ExcludeClass]
+
 	/**
 	 * @link    http://www.foomo.org
 	 * @license http://www.gnu.org/licenses/lgpl.txt

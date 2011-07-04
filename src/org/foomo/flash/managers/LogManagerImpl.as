@@ -17,21 +17,19 @@
 package org.foomo.flash.managers
 {
 	import flash.events.EventDispatcher;
-	import flash.external.ExternalInterface;
 
 	import org.foomo.flash.events.LogManagerEvent;
 	import org.foomo.flash.logging.ILoggingTarget;
 	import org.foomo.flash.logging.LogLevel;
-	import org.foomo.flash.ui.Terminal;
 	import org.foomo.flash.utils.ClassUtil;
 	import org.foomo.flash.utils.StringUtil;
 
-	//[ExcludeClass]
+	[ExcludeClass]
 
 	/**
-	 * @link www.foomo.org
+	 * @link 	www.foomo.org
 	 * @license http://www.gnu.org/licenses/lgpl.txt
-	 * @author franklin <franklin@weareinteractive.com>
+	 * @author 	franklin <franklin@weareinteractive.com>
 	 */
 	public class LogManagerImpl extends EventDispatcher implements ILogManager
 	{

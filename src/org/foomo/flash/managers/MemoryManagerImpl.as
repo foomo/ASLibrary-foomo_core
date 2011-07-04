@@ -24,6 +24,8 @@ package org.foomo.flash.managers
 	import org.foomo.flash.memory.IUnloader;
 	import org.foomo.flash.utils.ClassUtil;
 
+	[ExcludeClass]
+
 	/**
 	 * @link    http://www.foomo.org
 	 * @license http://www.gnu.org/licenses/lgpl.txt
