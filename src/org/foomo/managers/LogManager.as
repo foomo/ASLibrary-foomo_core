@@ -16,7 +16,7 @@
  */
 package org.foomo.managers
 {
-	import org.foomo.core.Singleton;
+	import org.foomo.core.Managers;
 	import org.foomo.logging.ILoggingTarget;
 	import org.foomo.logging.LogLevel;
 	import org.foomo.logging.TerminalTarget;
@@ -34,7 +34,7 @@ package org.foomo.managers
 		// ~ Static initialization
 		//-----------------------------------------------------------------------------------------
 
-		Singleton.registerClass('org.foomo.flash.managers::ILogManager', LogManagerImpl);
+		Managers.registerClass('org.foomo.flash.managers::ILogManager', LogManagerImpl);
 
 		//-----------------------------------------------------------------------------------------
 		// ~ Constants
@@ -58,7 +58,7 @@ package org.foomo.managers
 
 		private static function get impl():ILogManager
 		{
-			if (!_impl) _impl = ILogManager(Singleton.getInstance("org.foomo.flash.managers::ILogManager"));
+			if (!_impl) _impl = ILogManager(Managers.getInstance("org.foomo.flash.managers::ILogManager"));
 			return _impl;
 		}
 

@@ -2,9 +2,10 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.foomo.org" xsi:schemaLocation="http://www.foomo.org http://www.foomo.org/foomo/modules/Foomo.Flash/schemas/project.xsd">
 	<id>org.foomo.core</id>
 	<group>org.foomo</group>
+	<version>alpha-1.0</version>
 	<type>Library Project</type>
 	<name>Foomo common library</name>
-	<description>Common as3 library project.</description>
+	<description>Foomo common library</description>
 	<exclude>true</exclude>
 	<dependencies/>
 </config>

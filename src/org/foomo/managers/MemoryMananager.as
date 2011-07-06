@@ -1,6 +1,6 @@
 package org.foomo.managers
 {
-	import org.foomo.core.Singleton;
+	import org.foomo.core.Managers;
 	import org.foomo.memory.IUnloader;
 
 	public class MemoryMananager
@@ -9,7 +9,7 @@ package org.foomo.managers
 		// ~ Static initialization
 		//-----------------------------------------------------------------------------------------
 
-		Singleton.registerClass('org.foomo.flash.managers::IMemoryManager', MemoryManagerImpl);
+		Managers.registerClass('org.foomo.flash.managers::IMemoryManager', MemoryManagerImpl);
 
 		//-----------------------------------------------------------------------------------------
 		// ~ Static variables
@@ -26,7 +26,7 @@ package org.foomo.managers
 
 		private static function get impl():IMemoryManager
 		{
-			if (!_impl) _impl = IMemoryManager(Singleton.getInstance("org.foomo.flash.managers::IMemoryManager"));
+			if (!_impl) _impl = IMemoryManager(Managers.getInstance("org.foomo.flash.managers::IMemoryManager"));
 			return _impl;
 		}
 

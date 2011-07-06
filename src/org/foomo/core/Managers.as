@@ -17,15 +17,15 @@
 package org.foomo.core
 {
 	/**
-	 * This class is inspired by flex framework as if gives you the possibility
-	 * to overwrite singletons in the preinitialization process.
+	 * This class is inspired by flex framework's Singleton class as if gives you the
+	 * possibility to overwrite singletons in the preinitialization process.
 	 *
 	 * @link www.foomo.org
 	 * @license http://www.gnu.org/licenses/lgpl.txt
 	 * @author franklin <franklin@weareinteractive.com>
 	 * @see mx.core.Singleton
 	 */
-	public class Singleton
+	public class Managers
 	{
 		//-----------------------------------------------------------------------------------------
 		// ~ Variables

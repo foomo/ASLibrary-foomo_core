@@ -1,6 +1,6 @@
 package org.foomo.managers
 {
-	import org.foomo.core.Singleton;
+	import org.foomo.core.Managers;
 
 	public class SessionManager
 	{
@@ -8,7 +8,7 @@ package org.foomo.managers
 		// ~ Static initialization
 		//-----------------------------------------------------------------------------------------
 
-		Singleton.registerClass('org.foomo.flash.managers::ISharedObjectManager', SessionManagerImpl);
+		Managers.registerClass('org.foomo.flash.managers::ISharedObjectManager', SessionManagerImpl);
 
 		//-----------------------------------------------------------------------------------------
 		// ~ Static variables
@@ -25,7 +25,7 @@ package org.foomo.managers
 
 		private static function get impl():ISessionManager
 		{
-			if (!_impl) _impl = ISessionManager(Singleton.getInstance("org.foomo.flash.managers::ISharedObjectManager"));
+			if (!_impl) _impl = ISessionManager(Managers.getInstance("org.foomo.flash.managers::ISharedObjectManager"));
 			return _impl;
 		}
 
