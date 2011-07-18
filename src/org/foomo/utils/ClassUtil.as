@@ -28,6 +28,12 @@ package org.foomo.utils
 	public class ClassUtil
 	{
 		//-----------------------------------------------------------------------------------------
+		// ~ Static variables
+		//-----------------------------------------------------------------------------------------
+
+		private static var getConstructorParameterLengthCache:Array = [];
+
+		//-----------------------------------------------------------------------------------------
 		// ~ Public static methods
 		//-----------------------------------------------------------------------------------------
 
@@ -58,7 +64,7 @@ package org.foomo.utils
 		}
 
 		/**
-		 *
+		 * @todo chache
 		 */
 		public static function getClassName(value:*):String
 		{
@@ -82,6 +88,66 @@ package org.foomo.utils
 		{
 			if (!(instance is type)) return null;
 			return ClassUtil.callMethod(instance, method, args);
+		}
+
+		/**
+		 *
+		 */
+		public static function createInstance(clazz:Class, args:Array=null):*
+		{
+			if (args == null) args = [];
+			switch (args.length) {
+				case 0:
+					return new clazz();
+					break;
+				case 1:
+					return new clazz(args[0]);
+					break;
+				case 2:
+					return new clazz(args[0], args[1]);
+					break;
+				case 3:
+					return new clazz(args[0], args[1], args[2]);
+					break;
+				case 4:
+					return new clazz(args[0], args[1], args[2], args[3]);
+					break;
+				case 5:
+					return new clazz(args[0], args[1], args[2], args[3], args[4]);
+					break;
+				case 6:
+					return new clazz(args[0], args[1], args[2], args[3], args[4], args[5]);
+					break;
+				case 7:
+					return new clazz(args[0], args[1], args[2], args[3], args[4], args[5], args[6]);
+					break;
+				case 8:
+					return new clazz(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
+					break;
+				case 9:
+					return new clazz(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8]);
+					break;
+				case 10:
+					return new clazz(args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8], args[9]);
+					break;
+				default:
+					throw new Error('Too many arguments! Please update me self!');
+					break;
+			}
+		}
+
+		/**
+		 *
+		 */
+		public static function getConstructorParameters(clazz:Class):Array
+		{
+			var clazzName:String = ClassUtil.getQualifiedName(clazz);
+			if (ClassUtil.getConstructorParameterLengthCache[clazzName]) return ClassUtil.getConstructorParameterLengthCache[clazzName];
+			var parameters:Array = [];
+			var clazzDescription:XML = describeType(clazz);
+			for each (var item:XML in clazzDescription..constructor.parameter) parameters.push(item.@type.toXMLString().replace('::', '.'));
+			ClassUtil.getConstructorParameterLengthCache[clazzName] = parameters;
+			return ClassUtil.getConstructorParameterLengthCache[clazzName];
 		}
 	}
 }
