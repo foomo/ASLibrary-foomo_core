@@ -19,7 +19,7 @@ package org.foomo.managers
 	import org.foomo.core.Managers;
 	import org.foomo.logging.ILoggingTarget;
 	import org.foomo.logging.LogLevel;
-	import org.foomo.logging.TerminalTarget;
+	import org.foomo.logging.TraceTarget;
 
 	[Event(name="log", type="org.foomo.events.LogManagerEvent")]
 
@@ -41,7 +41,7 @@ package org.foomo.managers
 		//-----------------------------------------------------------------------------------------
 
 		public static var DEFAULT_LOG_LEVEL:int = LogLevel.WARN;
-		public static var DEFAULT_LOGGING_TARGET:Class = TerminalTarget;
+		public static var DEFAULT_LOGGING_TARGET:Class = TraceTarget;
 
 		//-----------------------------------------------------------------------------------------
 		// ~ Static variables
