@@ -40,7 +40,7 @@ package org.foomo.managers
 		// ~ Constants
 		//-----------------------------------------------------------------------------------------
 
-		public static var DEFAULT_LOG_LEVEL:int = LogLevel.WARN;
+		public static var DEFAULT_LOG_LEVEL:int = LogLevel.INFO;
 		public static var DEFAULT_LOGGING_TARGET:Class = TraceTarget;
 
 		//-----------------------------------------------------------------------------------------
