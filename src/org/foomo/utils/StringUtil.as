@@ -53,11 +53,13 @@ package org.foomo.utils
 		}
 
 		/**
+		 * @todo: remove the array check
 		 * usage: StringUtilss.substitue('my {0} string', ['foobar']);
 		 */
-		public static function substitue(string:String, parameters:Array):String
+		public static function substitue(string:String, ... rest):String
 		{
-			for (var i:int = 0; i < parameters.length; ++i) string = string.replace( "{"+i+"}", parameters[i]);
+			if (rest.length == 1 && rest[0] is Array) rest = rest[0];
+			for (var i:int = 0; i < rest.length; ++i) string = string.replace( "{"+i+"}", rest[i]);
 			return string;
 		}
 	}
