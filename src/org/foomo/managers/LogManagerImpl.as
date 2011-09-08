@@ -60,8 +60,8 @@ package org.foomo.managers
 		 */
 		public function LogManagerImpl()
 		{
-			this._level = LogManager.DEFAULT_LOG_LEVEL;
-			this.addLoggingTarget(new LogManager.DEFAULT_LOGGING_TARGET);
+			this._level = LogManager.defaultLogLevel;
+			this.addLoggingTarget(new LogManager.defaultLoggingTarget);
 		}
 
 		/**
@@ -87,29 +87,9 @@ package org.foomo.managers
 			this._level = value;
 		}
 
-		public function isDebug():Boolean
+		public function isLevel(level:int):Boolean
 		{
-			return (this.level <= LogLevel.DEBUG);
-		}
-
-		public function isInfo():Boolean
-		{
-			return (this.level <= LogLevel.INFO);
-		}
-
-		public function isWarn():Boolean
-		{
-			return (this.level <= LogLevel.WARN);
-		}
-
-		public function isError():Boolean
-		{
-			return (this.level <= LogLevel.ERROR);
-		}
-
-		public function isFatal():Boolean
-		{
-			return (this.level <= LogLevel.FATAL);
+			return (this.level <= level);
 		}
 
 		public function addLoggingTarget(target:ILoggingTarget):String

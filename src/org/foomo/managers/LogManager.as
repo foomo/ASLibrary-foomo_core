@@ -37,16 +37,17 @@ package org.foomo.managers
 		Managers.registerClass('org.foomo.flash.managers::ILogManager', LogManagerImpl);
 
 		//-----------------------------------------------------------------------------------------
-		// ~ Constants
-		//-----------------------------------------------------------------------------------------
-
-		public static var DEFAULT_LOG_LEVEL:int = LogLevel.INFO;
-		public static var DEFAULT_LOGGING_TARGET:Class = TraceTarget;
-
-		//-----------------------------------------------------------------------------------------
 		// ~ Static variables
 		//-----------------------------------------------------------------------------------------
 
+		/**
+		 *
+		 */
+		public static var defaultLogLevel:int = LogLevel.INFO;
+		/**
+		 *
+		 */
+		public static var defaultLoggingTarget:Class = TraceTarget;
 		/**
 		 * @private
 		 */
@@ -81,29 +82,34 @@ package org.foomo.managers
 			impl.level = value;
 		}
 
+		public static function isLevel(level:int):Boolean
+		{
+			return impl.isLevel(level);
+		}
+
 		public static function isDebug():Boolean
 		{
-			return impl.isDebug();
+			return impl.isLevel(LogLevel.DEBUG);
 		}
 
 		public static function isInfo():Boolean
 		{
-			return impl.isInfo();
+			return impl.isLevel(LogLevel.INFO);
 		}
 
 		public static function isWarn():Boolean
 		{
-			return impl.isWarn()
+			return impl.isLevel(LogLevel.WARN)
 		}
 
 		public static function isError():Boolean
 		{
-			return impl.isError();
+			return impl.isLevel(LogLevel.ERROR);
 		}
 
 		public static function isFatal():Boolean
 		{
-			return impl.isFatal();
+			return impl.isLevel(LogLevel.FATAL);
 		}
 
 		public static function log(category:*, level:int, message:String, ... rest):void

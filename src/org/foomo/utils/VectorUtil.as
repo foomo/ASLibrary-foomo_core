@@ -14,25 +14,45 @@
 * You should have received a copy of the GNU Lesser General Public License along with
 * the foomo Opensource Framework. If not, see <http://www.gnu.org/licenses/>.
 */
-package org.foomo.memory
+package org.foomo.utils
 {
-
-	[ExcludeClass]
-
 	/**
-	 * @link    http://www.foomo.org
+	 * @link www.foomo.org
 	 * @license http://www.gnu.org/licenses/lgpl.txt
-	 * @author  franklin <franklin@weareinteractive.com>
+	 * @author franklin <franklin@weareinteractive.com>
 	 */
-	public class IUnloadUnloader implements IUnloader
+	public class VectorUtil
 	{
 		//-----------------------------------------------------------------------------------------
-		// ~ Public methods
+		// ~ Public static methods
 		//-----------------------------------------------------------------------------------------
 
-		public function unload(object:Object):void
+		/**
+		 * Returns the index of the item in the Array.
+		 */
+		public static function getItemIndex(item:Object, source:*):int
 		{
-			object.unload();
+			var n:int = source.length;
+			for (var i:int = 0; i < n; i++) if (source[i] === item) return i;
+			return -1;
+		}
+
+		/**
+		 * Removes all items from an array
+		 */
+		public static function removeAll(vector:*):*
+		{
+			return vector.splice(0, vector.length);
+		}
+
+		/**
+		 *
+		 */
+		public static function toArray(vector:*):Array
+		{
+			var ret:Array = [];
+			for each (var elem:* in vector) ret.push(elem);
+			return ret;
 		}
 	}
 }

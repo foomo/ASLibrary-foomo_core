@@ -28,13 +28,45 @@ package org.foomo.utils
 		//-----------------------------------------------------------------------------------------
 
 		/**
-		 *  Returns the index of the item in the Array.
+		 *
 		 */
-		public static function getItemIndex(item:Object, source:Array):int
+		public static function merge(source:Array, ... arrays):void
 		{
-			var n:int = source.length;
-			for (var i:int = 0; i < n; i++) if (source[i] === item) return i;
-			return -1;
+			for each (var array2:Array in arrays) {
+				for (var key:Object in array2)  {
+					if (key is int && !source[key]) {
+						source.push(array2[key]);
+					} else {
+						source[key] = array2[key];
+					}
+				}
+			}
+		}
+
+		/**
+		 *
+		 */
+		public static function ccontainsValue(source:Array, value:Object):Boolean
+		{
+			return (source.indexOf(value) >= 0);
+		}
+
+		/**
+		 *
+		 */
+		public static function copy(source:Array):Array
+		{
+			var ret:Array = [];
+			for (var key:Object in source) ret[key] = source[key];
+			return ret;
+		}
+
+		/**
+		 * Removes all items from an array
+		 */
+		public static function removeAll(source:Array):*
+		{
+			return source.splice(0, source.length);
 		}
 	}
 }

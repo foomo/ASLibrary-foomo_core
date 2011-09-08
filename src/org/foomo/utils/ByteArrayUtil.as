@@ -14,48 +14,46 @@
  * You should have received a copy of the GNU Lesser General Public License along with
  * the foomo Opensource Framework. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.foomo.logging
+package org.foomo.utils
 {
-	import flash.external.ExternalInterface;
+	import flash.utils.ByteArray;
 
 	/**
 	 * @link    http://www.foomo.org
 	 * @license http://www.gnu.org/licenses/lgpl.txt
 	 * @author  franklin <franklin@weareinteractive.com>
 	 */
-	public class ConsoleTarget implements ILoggingTarget
+	public class ByteArrayUtil
 	{
 		//-----------------------------------------------------------------------------------------
-		// ~ Public methods
+		// ~ Public static methods
 		//-----------------------------------------------------------------------------------------
 
-		public function format(category:String, message:String, level:int):String
+		/**
+		 * @see 	http://www.be-interactive.org/?itemid=250
+		 * @see 	http://fladdict.net/blog/2007/05/avm2avm1swf.html
+		 * @author 	yossy:beinteractive
+		 */
+		public static function isCompressed(bytes:ByteArray):Boolean
 		{
-			return '[' + LogLevel.getLevelString(level) + '] ' + message + '  in ' + category;
+			return bytes[0] == 0x43;
 		}
 
-		public function output(message:String, level:int):void
+		/**
+		 * @see 	http://www.be-interactive.org/?itemid=250
+		 * @see 	http://fladdict.net/blog/2007/05/avm2avm1swf.html
+		 * @author 	yossy:beinteractive
+		 */
+		public static function uncompress(bytes:ByteArray):void
 		{
-			var method:String;
-
-			switch (level) {
-				case LogLevel.DEBUG:
-					method = 'debug';
-					break;
-				case LogLevel.INFO:
-					method = 'info';
-					break;
-				case LogLevel.WARN:
-					method = 'warn';
-					break;
-				case LogLevel.ERROR:
-					method = 'error';
-					break;
-				case LogLevel.FATAL:
-					method = 'error';
-					break;
-			}
-			ExternalInterface.call('console.' + method, message);
+			var cBytes:ByteArray = new ByteArray();
+			cBytes.writeBytes(bytes, 8);
+			bytes.length = 8;
+			bytes.position = 8;
+			cBytes.uncompress();
+			bytes.writeBytes(cBytes);
+			bytes[0] = 0x46;
+			cBytes.length = 0;
 		}
 	}
 }

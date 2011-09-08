@@ -14,48 +14,46 @@
  * You should have received a copy of the GNU Lesser General Public License along with
  * the foomo Opensource Framework. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.foomo.logging
+package org.foomo.utils
 {
-	import flash.external.ExternalInterface;
+	import flash.events.Event;
+	import flash.events.EventDispatcher;
+	import flash.events.IEventDispatcher;
 
 	/**
 	 * @link    http://www.foomo.org
 	 * @license http://www.gnu.org/licenses/lgpl.txt
 	 * @author  franklin <franklin@weareinteractive.com>
 	 */
-	public class ConsoleTarget implements ILoggingTarget
+	public class EventHandlerUtil extends EventDispatcher
 	{
 		//-----------------------------------------------------------------------------------------
 		// ~ Public methods
 		//-----------------------------------------------------------------------------------------
 
-		public function format(category:String, message:String, level:int):String
+		public static function addCallback(callback:Function, eventArgs:Array=null, ... args):Function
 		{
-			return '[' + LogLevel.getLevelString(level) + '] ' + message + '  in ' + category;
+			var ret:Function;
+			if (eventArgs == null) eventArgs = [];
+
+			ret = function(e:Event):void {
+				var ret:Array = args.concat();
+				for (var i:int = eventArgs.length - 1; i >= 0; i--) ret.unshift(ObjectUtil.resolveValue(e, eventArgs[i]));
+				callback.apply(null, ret);
+			};
+
+			return ret;
 		}
 
-		public function output(message:String, level:int):void
+		public static function setOn(host:Object, property:String, eventArg:String=null, customArg:*=null):Function
 		{
-			var method:String;
+			var ret:Function;
 
-			switch (level) {
-				case LogLevel.DEBUG:
-					method = 'debug';
-					break;
-				case LogLevel.INFO:
-					method = 'info';
-					break;
-				case LogLevel.WARN:
-					method = 'warn';
-					break;
-				case LogLevel.ERROR:
-					method = 'error';
-					break;
-				case LogLevel.FATAL:
-					method = 'error';
-					break;
-			}
-			ExternalInterface.call('console.' + method, message);
+			ret = function(e:Event):void {
+				host[property] = (eventArg) ? ObjectUtil.resolveValue(e, eventArg) : customArg;
+			};
+
+			return ret;
 		}
 	}
 }

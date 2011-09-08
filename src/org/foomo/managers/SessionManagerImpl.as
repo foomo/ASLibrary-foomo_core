@@ -18,6 +18,7 @@ package org.foomo.managers
 {
 	import flash.events.EventDispatcher;
 	import flash.net.SharedObject;
+	import flash.net.registerClassAlias;
 
 	import org.foomo.utils.ClassUtil;
 	import org.foomo.utils.UIDUtil;
@@ -105,7 +106,7 @@ package org.foomo.managers
 		 */
 		public function get clientId():String
 		{
-			return (this.localIsAvailable) ? this.getLocalData(name) : this.sessionId;
+			return (this.localIsAvailable) ? this.getLocalData(name) as String : this.sessionId;
 		}
 
 		/**
@@ -128,7 +129,7 @@ package org.foomo.managers
 			if (this._localObject.data.hasOwnProperty(key)) {
 				return this._localObject.data[key];
 			} else if (defaultValue != null) {
-				return this.setLocalData(key, defaultValue);
+				return defaultValue;
 			} else {
 				return null;
 			}
@@ -136,6 +137,7 @@ package org.foomo.managers
 
 		public function removeLocalData(key:Object):*
 		{
+			key = (key is String) ? key : ClassUtil.getQualifiedName(key);
 			if (!this._localObject.data.hasOwnProperty(key)) return null;
 			var value:* = this._localObject.data[key];
 			delete this._localObject.data[key];

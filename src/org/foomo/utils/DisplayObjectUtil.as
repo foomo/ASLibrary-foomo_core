@@ -16,8 +16,12 @@
  */
 package org.foomo.utils
 {
+	import flash.display.Bitmap;
+	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
+	import flash.display.Shape;
+	import flash.display.Sprite;
 
 	/**
 	 * @link www.foomo.org
@@ -48,6 +52,55 @@ package org.foomo.utils
 				child = child.parent;
 			}
 			return parent;
+		}
+
+		/**
+		 * @param source
+		 * @param transparent
+		 * @param fillColor
+		 * @return
+		 */
+		public static function getBitmapData(source:DisplayObject, transparent:Boolean=true, fillColor:int=0xffffff):BitmapData
+		{
+			var bmd:BitmapData;
+			if (source.width == 0 || source.height == 0) {
+				bmd = DisplayObjectUtil.getDummyBitmapData();
+			} else {
+				bmd = new BitmapData(source.width, source.height, transparent, fillColor);
+				try {
+					bmd.draw(source);
+				} catch (e:Error) {
+					bmd = DisplayObjectUtil.getDummyBitmapData();
+				}
+			}
+			return bmd;
+		}
+
+		/**
+		 * @param source
+		 * @return
+		 */
+		public static function getBitmap(source:DisplayObject, transparent:Boolean=true, fillColor:int=0xffffff, pixelSnapping:String='auto', smoothing:Boolean=true):Bitmap
+		{
+			return new Bitmap(DisplayObjectUtil.getBitmapData(source), pixelSnapping, smoothing);
+		}
+
+		//-----------------------------------------------------------------------------------------
+		// ~ Private static methods
+		//-----------------------------------------------------------------------------------------
+
+		/**
+		 * @return 1x1 transparent bitmapdata
+		 */
+		private static function getDummyBitmapData():BitmapData
+		{
+			var bmd:BitmapData = new BitmapData(1, 1);
+			var sprite:Shape = new Shape;
+			sprite.graphics.beginFill(0x000000, 0);
+			sprite.graphics.drawRect(0, 0, 1, 1);
+			sprite.graphics.endFill();
+			bmd.draw(sprite);
+			return bmd;
 		}
 	}
 }

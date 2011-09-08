@@ -16,6 +16,7 @@
  */
 package org.foomo.utils
 {
+	import flash.net.registerClassAlias;
 	import flash.utils.describeType;
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
@@ -60,7 +61,7 @@ package org.foomo.utils
 		 */
 		public static function getClass(value:*):Class
 		{
-			return getDefinitionByName(ClassUtil.getQualifiedName(value)) as Class;
+			return (value != null) ? getDefinitionByName(ClassUtil.getQualifiedName(value)) as Class : null;
 		}
 
 		/**
@@ -148,6 +149,14 @@ package org.foomo.utils
 			for each (var item:XML in clazzDescription..constructor.parameter) parameters.push(item.@type.toXMLString().replace('::', '.'));
 			ClassUtil.getConstructorParameterLengthCache[clazzName] = parameters;
 			return ClassUtil.getConstructorParameterLengthCache[clazzName];
+		}
+
+		/**
+		 *
+		 */
+		public static function registerClass(clazz:Class):void
+		{
+			registerClassAlias(getQualifiedName(clazz), clazz);
 		}
 	}
 }

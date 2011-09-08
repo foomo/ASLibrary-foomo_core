@@ -14,48 +14,35 @@
  * You should have received a copy of the GNU Lesser General Public License along with
  * the foomo Opensource Framework. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.foomo.logging
+package org.foomo.utils
 {
-	import flash.external.ExternalInterface;
+	import flash.display.InteractiveObject;
+	import flash.events.KeyboardEvent;
 
 	/**
 	 * @link    http://www.foomo.org
 	 * @license http://www.gnu.org/licenses/lgpl.txt
 	 * @author  franklin <franklin@weareinteractive.com>
+	 * @todo	check weak binding
 	 */
-	public class ConsoleTarget implements ILoggingTarget
+	public class KeyboardUtil
 	{
 		//-----------------------------------------------------------------------------------------
 		// ~ Public methods
 		//-----------------------------------------------------------------------------------------
 
-		public function format(category:String, message:String, level:int):String
+		public static function addKeyCodeCallback(caller:InteractiveObject, callback:Function, keyCode:int, ctrlKey:Boolean=false, altKey:Boolean=false, shiftKey:Boolean=false, ... args):void
 		{
-			return '[' + LogLevel.getLevelString(level) + '] ' + message + '  in ' + category;
+			caller.addEventListener(KeyboardEvent.KEY_DOWN, EventHandlerUtil.addCallback(caller_keyDownHandler, ['keyCode', 'ctrlKey', 'altKey', 'shiftKey'], callback, keyCode, ctrlKey, altKey, shiftKey, args));
 		}
 
-		public function output(message:String, level:int):void
-		{
-			var method:String;
+		//-----------------------------------------------------------------------------------------
+		// ~ Private methods
+		//-----------------------------------------------------------------------------------------
 
-			switch (level) {
-				case LogLevel.DEBUG:
-					method = 'debug';
-					break;
-				case LogLevel.INFO:
-					method = 'info';
-					break;
-				case LogLevel.WARN:
-					method = 'warn';
-					break;
-				case LogLevel.ERROR:
-					method = 'error';
-					break;
-				case LogLevel.FATAL:
-					method = 'error';
-					break;
-			}
-			ExternalInterface.call('console.' + method, message);
+		private static function caller_keyDownHandler(eventKeyCode:uint, eventCtrlKey:Boolean, eventAltKey:Boolean, eventShifKey:Boolean, callback:Function, keyCode:uint, ctrlKey:Boolean, altKey:Boolean, shifKey:Boolean, args:Array):void
+		{
+			if (eventKeyCode == keyCode && eventCtrlKey == ctrlKey && eventAltKey  == altKey && eventShifKey == shifKey) callback.apply(null, args);
 		}
 	}
 }

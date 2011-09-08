@@ -1,27 +1,26 @@
 /*
-* This file is part of the foomo Opensource Framework.
-*
-* The foomo Opensource Framework is free software: you can redistribute it
-* and/or modify it under the terms of the GNU Lesser General Public License as
-* published  by the Free Software Foundation, either version 3 of the
-* License, or (at your option) any later version.
-*
-* The foomo Opensource Framework is distributed in the hope that it will
-* be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-* of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU Lesser General Public License for more details.
-*
-* You should have received a copy of the GNU Lesser General Public License along with
-* the foomo Opensource Framework. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * This file is part of the foomo Opensource Framework.
+ *
+ * The foomo Opensource Framework is free software: you can redistribute it
+ * and/or modify it under the terms of the GNU Lesser General Public License as
+ * published  by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * The foomo Opensource Framework is distributed in the hope that it will
+ * be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with
+ * the foomo Opensource Framework. If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.foomo.memory
 {
 	import flash.events.Event;
 
-	import mx.managers.SystemManager;
-
 	import org.foomo.logging.LogLevel;
 	import org.foomo.managers.LogManager;
+	import org.foomo.utils.CallLaterUtil;
 	import org.foomo.utils.DebugUtil;
 
 	[ExcludeClass]
@@ -56,7 +55,7 @@ package org.foomo.memory
 		 */
 		public function unload(object:Object):void
 		{
-			if (DisplayObjectUnloader.debug) object.addEventListener(Event.ENTER_FRAME, DisplayObjectUnloader.orphantEnterFrameHandler, false, 0, true)
+			if (DisplayObjectUnloader.debug) object.addEventListener(Event.ENTER_FRAME, DisplayObjectUnloader.orphant_enterFrameHandler, false, 0, true)
 		}
 
 		//-----------------------------------------------------------------------------------------
@@ -69,20 +68,19 @@ package org.foomo.memory
 			DisplayObjectUnloader._logLevel = level;
 			DisplayObjectUnloader._verbose = verbose;
 			DisplayObjectUnloader._orphans = new Array;
-			SystemManager.getSWFRoot({}).addEventListener(Event.ENTER_FRAME, DisplayObjectUnloader.swfRoot_enterFrameHandler);
+			CallLaterUtil.addCallback(DisplayObjectUnloader.logOrphans_callLaterCallback)
 		}
 
 		//-----------------------------------------------------------------------------------------
 		// ~ Private static methods
 		//-----------------------------------------------------------------------------------------
 
-		private static function swfRoot_enterFrameHandler(event:Event):void
+		private static function logOrphans_callLaterCallback():void
 		{
 			if (DisplayObjectUnloader._recordOrphans) {
 				var report:String = '';
 				DisplayObjectUnloader._recordOrphans = false;
 
-				SystemManager.getSWFRoot({}).removeEventListener(Event.ENTER_FRAME, DisplayObjectUnloader.swfRoot_enterFrameHandler);
 				if (DisplayObjectUnloader._verbose) {
 					LogManager.log(DisplayObjectContainerUnloader, DisplayObjectUnloader._logLevel, 'Orphant list:\n{0}', DebugUtil.export(DisplayObjectUnloader._orphans));
 				} else {
@@ -99,7 +97,7 @@ package org.foomo.memory
 		/**
 		 * TODO: Check if the one frame loop works as intended
 		 */
-		private static function orphantEnterFrameHandler(event:Event):void
+		private static function orphant_enterFrameHandler(event:Event):void
 		{
 			if (DisplayObjectUnloader._recordOrphans) {
 				var id:String = (event.target.hasOwnProperty('uid')) ? event.target.uid : event.target.toString();

@@ -16,6 +16,8 @@
  */
 package org.foomo.utils
 {
+
+
 	/**
 	 * @link www.foomo.org
 	 * @license http://www.gnu.org/licenses/lgpl.txt
@@ -50,6 +52,48 @@ package org.foomo.utils
 		{
 			for (var i:int=0; i<repeat; i++) string = value + string
 			return string;
+		}
+
+		/**
+		 * Append sth before a given string x times
+		 */
+		public static function append(string:String, value:String, repeat:uint=1):String
+		{
+			for (var i:int=0; i<repeat; i++) string += value;
+			return string;
+		}
+
+		/**
+		 * myString => ['my', 'String']
+		 */
+		public static function camelCaseSplit(string:String):Array
+		{
+			var j:int = 0;
+			var ret:Array = [];
+			for (var i:int=0; i<string.length; i++) {
+				var char:String = string.charAt(i);
+				var charUpper:String = char.toUpperCase();
+				if (char == charUpper) j++;
+				if (!ret[j]) ret[j] = '';
+				ret[j] += char;
+			}
+			return ret;
+		}
+
+		/**
+		 * myString => MY_STRING
+		 */
+		public static function camelCaseToUpperCase(string:String, seperator:String='_'):String
+		{
+			return StringUtil.camelCaseSplit(string).join(seperator).toUpperCase();
+		}
+
+		/**
+		 * myString => my_string
+		 */
+		public static function camelCaseToLowerCase(string:String, seperator:String='_'):String
+		{
+			return StringUtil.camelCaseSplit(string).join(seperator).toLowerCase();
 		}
 
 		/**

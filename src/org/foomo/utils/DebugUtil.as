@@ -17,10 +17,8 @@
 package org.foomo.utils
 {
 	import flash.utils.describeType;
-	import flash.utils.getQualifiedClassName;
 
-	import mx.utils.ObjectUtil;
-
+	import org.foomo.logging.LogLevel;
 	import org.foomo.managers.LogManager;
 
 	/**
@@ -50,6 +48,15 @@ package org.foomo.utils
 		}
 
 		/**
+		 * Logs a human readable object description
+		 * Note: you should not use this in production mode as it costs time to reflect
+		 */
+		public static function dump(obj:Object, level:int=LogLevel.DEBUG):void
+		{
+			if (LogManager.isLevel(level)) LogManager.log(DebugUtil, level, DebugUtil.export(obj));
+		}
+
+		/**
 		 * Returns lines of the stack trace
 		 * Note: Works only for the debug player
 		 */
@@ -57,9 +64,7 @@ package org.foomo.utils
 		{
 			var stackTrace:String	= '';
 			var stackData:Array		= DebugUtil.getStackTraceData(startIndex, endIndex);
-			while (stackData.length > 0) {
-				stackTrace += stackData.shift() + '\n';
-			}
+			while (stackData.length > 0) stackTrace += stackData.shift() + '\n';
 			return stackTrace;
 		}
 
@@ -111,15 +116,19 @@ package org.foomo.utils
 					break;
 				case 'Array':
 				case 'Object':
-					for (prop in obj) export += formatType(prop, ClassUtil.getQualifiedName(prop)) + ' => ' + recursiveExport(obj[prop], level + 1);
-					export = formatType(obj, className) + ' {\n' + indent(export.substr(0, -1)) + '\n}\n';
+					var count:int = 0;
+					for (prop in obj) {
+						export += formatType(prop, ClassUtil.getQualifiedName(prop)) + ' => ' + recursiveExport(obj[prop], level + 1);
+						count++;
+					}
+					export = formatType(obj, className) + ' {\n' + indent(export.substr(0, -1)) + '\n} (length=' + count + ')\n';
 					break;
 				default:
 					if (type == 'object') {
 						var propXML:XML
 						var objDescription:XML = describeType(obj);
 						for each (propXML in objDescription..variable) export += "'" + propXML.@type.toXMLString() + "'" + ' => ' + recursiveExport(obj[propXML.@type.toXMLString()], level + 1);
-						for each (propXML in objDescription..accessor) if (prop.access != 'writeonly') export += "'" + propXML.@name.toXMLString() + "'" + ' => ' + recursiveExport(obj[propXML.@name.toXMLString()], level + 1);
+						for each (propXML in objDescription..accessor) if (propXML.access != 'writeonly') export += "'" + propXML.@name.toXMLString() + "'" + ' => ' + recursiveExport(obj[propXML.@name.toXMLString()], level + 1);
 						export = formatType(obj, className) + '\n' + indent(export.substr(0, -1)) + '\n';
 					} else {
 						LogManager.warn(LogManager, 'Unhandled type: {0} | {1}', type, className);

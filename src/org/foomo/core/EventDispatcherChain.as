@@ -18,16 +18,20 @@ package org.foomo.core
 {
 	import flash.events.Event;
 	import flash.events.IEventDispatcher;
+	import flash.sampler.getSavedThis;
 	import flash.utils.Proxy;
+	import flash.utils.describeType;
 	import flash.utils.flash_proxy;
 
 	import org.foomo.managers.LogManager;
 	import org.foomo.utils.ClassUtil;
+	import org.foomo.utils.ObjectUtil;
 	import org.foomo.utils.StringUtil;
 
 	use namespace flash_proxy;
 
 	/**
+	 * @todo 	use describe tpye to find all events
 	 * @link    http://www.foomo.org
 	 * @license http://www.gnu.org/licenses/lgpl.txt
 	 * @author  franklin <franklin@weareinteractive.com>
@@ -69,15 +73,32 @@ package org.foomo.core
 		/**
 		 *
 		 */
-		public function addEventCallback(type:String, callback:Function, eventArgs:Array=null, ... rest):EventDispatcherChain
+		public function addEventCallback(type:String, callback:Function, eventArgs:Array=null, ... customArgs):EventDispatcherChain
 		{
 			var fnc:Function
 			var instance:EventDispatcherChain = this;
 			if (eventArgs == null) eventArgs = [];
 
 			fnc = function(event:Event):void {
-				instance.extractArgs(event, callback.length, eventArgs, rest);
-				callback.apply(instance, rest);
+				if (LogManager.isDebug()) LogManager.debug(instance, 'Adding callback on event {0}::{1} :: callback({2})', ClassUtil.getQualifiedName(event.target), type, customArgs);
+				callback.apply(instance, instance.extractArgs(event, callback.length, eventArgs, customArgs));
+			}
+
+			return this.addDispatcherEventListener(type, fnc);
+		}
+
+		/**
+		 *
+		 */
+		public function setOnEvent(type:String, host:Object, property:String, eventArg:String=null, customArg:*=null):EventDispatcherChain
+		{
+			var fnc:Function
+			var instance:EventDispatcherChain = this;
+
+			fnc = function(event:Event):void {
+				var value:* = (eventArg) ? ObjectUtil.resolveValue(event, eventArg) : customArg;
+				if (LogManager.isDebug()) LogManager.debug(instance, 'Setting value on event {0}::{1} :: {2}::{3} = {4}', ClassUtil.getQualifiedName(event.target), type, ClassUtil.getQualifiedName(host), property, value);
+				host[property] = value;
 			}
 
 			return this.addDispatcherEventListener(type, fnc);
@@ -94,6 +115,14 @@ package org.foomo.core
 		/**
 		 *
 		 */
+		public function removeEventListener(type:String, listener:Function):EventDispatcherChain
+		{
+			return this.removeDispatcherEventListener(type, listener);
+		}
+
+		/**
+		 *
+		 */
 		public function chainOn(type:String, dispatcher:Class, eventArgs:Array=null, ... rest):EventDispatcherChain
 		{
 			var fnc:Function;
@@ -103,8 +132,8 @@ package org.foomo.core
 			if (eventArgs == null) eventArgs = [];
 
 			fnc = function(event:Event):void {
-				newInstance.extractArgs(event, ClassUtil.getConstructorParameters(dispatcher).length, eventArgs, rest);
-				newInstance.setDispatcher(dispatcher, rest);
+				if (LogManager.isDebug()) LogManager.debug(instance, 'Chaining on event {0}::{1} :: {2}', ClassUtil.getQualifiedName(event.target), type,  ClassUtil.getQualifiedName(dispatcher));
+				newInstance.setDispatcher(dispatcher, newInstance.extractArgs(event, ClassUtil.getConstructorParameters(dispatcher).length, eventArgs, rest));
 				instance.unload();
 			}
 
@@ -176,7 +205,6 @@ package org.foomo.core
 		 */
 		flash_proxy function unload():void
 		{
-			LogManager.debug(this, 'Unloading for {0}', this._dispatcher);
 			this.removeAllDispatcherListeners();
 			this._pendingEventListeners = null;
 			this._dispatcher = null;
@@ -196,16 +224,13 @@ package org.foomo.core
 		/**
 		 *
 		 */
-		flash_proxy function extractArgs(event:Event, methodCount:int, eventArgs:Array, rest:Array):void
+		flash_proxy function extractArgs(event:Event, methodCount:int, eventArgs:Array, rest:Array):Array
 		{
-			var eventArg:String
-			while (eventArg = eventArgs.shift()) {
-				var arg:* = event;
-				var eventArgItem:*;
-				var eventArgItems:Array = eventArg.split('.');
-				while (eventArgItem = eventArgItems.shift()) arg = arg[eventArgItem];
-				rest.unshift(arg);
+			var ret:Array = rest.concat();
+			for (var i:int = eventArgs.length - 1; i >= 0; i--) {
+				ret.unshift(ObjectUtil.resolveValue(event, eventArgs[i]));
 			}
+			return ret;
 		}
 
 		/**
@@ -215,9 +240,27 @@ package org.foomo.core
 		{
 			if (this._dispatcher) {
 				this._dispatcherEventListeners.push({type:type, listener:listener});
-				this._dispatcher.addEventListener(type, listener, false, 0, true);
+				this._dispatcher.addEventListener(type, listener);
 			} else {
 				this._pendingEventListeners.push({type:type, listener:listener});
+			}
+			return this;
+		}
+
+		/**
+		 *
+		 */
+		flash_proxy function removeDispatcherEventListener(type:String, listener:Function):EventDispatcherChain
+		{
+			var obj:Object;
+			var newListereners:Array = [];
+			if (this._dispatcher) {
+				for each (obj in this._dispatcherEventListeners) if (obj.type != type || obj.listener != listener) newListereners.push(obj);
+				this._dispatcherEventListeners = newListereners;
+				this._dispatcher.removeEventListener(type, listener);
+			} else {
+				for each (obj in this._pendingEventListeners) if (obj.type != type || obj.listener != listener) newListereners.push(obj);
+				this._pendingEventListeners = newListereners;
 			}
 			return this;
 		}
@@ -240,10 +283,11 @@ package org.foomo.core
 		/**
 		 *
 		 */
-		public static function create(dispatcher:Class, ... rest):EventDispatcherChain
+		public static function create(dispatcher:Class, ... args):EventDispatcherChain
 		{
+			if (LogManager.isDebug()) LogManager.debug(EventDispatcherChain, 'Creating EventDispatcherChain :: {0}', ClassUtil.getQualifiedName(dispatcher));
 			var ret:EventDispatcherChain = new EventDispatcherChain();
-			return ret.setDispatcher(dispatcher, rest);
+			return ret.setDispatcher(dispatcher, args);
 		}
 	}
 }

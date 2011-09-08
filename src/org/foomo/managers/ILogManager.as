@@ -31,11 +31,7 @@ package org.foomo.managers
 	{
 		function get level():int
 		function set level(value:int):void
-		function isDebug():Boolean
-		function isInfo():Boolean
-		function isWarn():Boolean
-		function isError():Boolean
-		function isFatal():Boolean
+		function isLevel(level:int):Boolean
 		function removeLoggingTarget(target:*):Boolean;
 		function addLoggingTarget(target:ILoggingTarget):String
 		function log(category:*, level:int, message:String, parameters:Array):void;
