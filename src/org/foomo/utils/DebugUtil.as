@@ -1,22 +1,23 @@
 /*
-* This file is part of the foomo Opensource Framework.
-*
-* The foomo Opensource Framework is free software: you can redistribute it
-* and/or modify it under the terms of the GNU Lesser General Public License as
-* published  by the Free Software Foundation, either version 3 of the
-* License, or (at your option) any later version.
-*
-* The foomo Opensource Framework is distributed in the hope that it will
-* be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-* of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU Lesser General Public License for more details.
-*
-* You should have received a copy of the GNU Lesser General Public License along with
-* the foomo Opensource Framework. If not, see <http://www.gnu.org/licenses/>.
-*/
+ * This file is part of the foomo Opensource Framework.
+ *
+ * The foomo Opensource Framework is free software: you can redistribute it
+ * and/or modify it under the terms of the GNU Lesser General Public License as
+ * published  by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * The foomo Opensource Framework is distributed in the hope that it will
+ * be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with
+ * the foomo Opensource Framework. If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.foomo.utils
 {
 	import flash.utils.describeType;
+	import flash.utils.getTimer;
 
 	import org.foomo.logging.LogLevel;
 	import org.foomo.managers.LogManager;
@@ -35,8 +36,37 @@ package org.foomo.utils
 		public static var MAX_EXPORT_LEVEL:uint = 5;
 
 		//-----------------------------------------------------------------------------------------
+		// ~ Static variables
+		//-----------------------------------------------------------------------------------------
+
+		private static var _measureTimes:Object = {};
+
+		//-----------------------------------------------------------------------------------------
 		// ~ Public static methods
 		//-----------------------------------------------------------------------------------------
+
+		/**
+		 * @param id sth to identify the timer
+		 */
+		public static function setTimer(id:Object):int
+		{
+			var time:int = flash.utils.getTimer();
+			var ms:int = (DebugUtil._measureTimes[id]) ? time - DebugUtil._measureTimes[id] : 0;
+			DebugUtil._measureTimes[id] = time;
+			return ms;
+		}
+
+		/**
+		 * @param id sth to identify the timer
+		 * @return time from last measure point
+		 */
+		public static function getTimer(id:Object):int
+		{
+			if (!DebugUtil._measureTimes[id]) return 0;
+			var ms:int = (flash.utils.getTimer() - DebugUtil._measureTimes[id]);
+			delete DebugUtil._measureTimes[id];
+			return ms;
+		}
 
 		/**
 		 * Returns a human readable object description
