@@ -83,7 +83,7 @@ package org.foomo.utils
 		 */
 		public static function dump(obj:Object, level:int=LogLevel.DEBUG):void
 		{
-			if (LogManager.isLevel(level)) LogManager.log(DebugUtil, level, DebugUtil.export(obj));
+			if (LogManager.isLevel(level)) LogManager.log(DebugUtil, level, DebugUtil.export(obj) + '\n');
 		}
 
 		/**
@@ -157,7 +157,7 @@ package org.foomo.utils
 					if (type == 'object') {
 						var propXML:XML
 						var objDescription:XML = describeType(obj);
-						for each (propXML in objDescription..variable) export += "'" + propXML.@type.toXMLString() + "'" + ' => ' + recursiveExport(obj[propXML.@type.toXMLString()], level + 1);
+						for each (propXML in objDescription..variable) try { export += "'" + propXML.@type.toXMLString() + "'" + ' => ' + recursiveExport(obj[propXML.@type.toXMLString()], level + 1) } catch (error:ReferenceError) {};
 						for each (propXML in objDescription..accessor) if (propXML.access != 'writeonly') export += "'" + propXML.@name.toXMLString() + "'" + ' => ' + recursiveExport(obj[propXML.@name.toXMLString()], level + 1);
 						export = formatType(obj, className) + '\n' + indent(export.substr(0, -1)) + '\n';
 					} else {

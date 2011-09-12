@@ -15,8 +15,8 @@ package org.foomo.utils
 		private static var staticInitialization:Object
 		{
 			_callLaterObject = new Shape;
-			_timeoutCallbacks = new Dictionary;
-			_invalidationCallbacks = new Dictionary;
+			_timeoutCallbacks = new Dictionary();
+			_invalidationCallbacks = new Dictionary();
 			_callLaterObject.addEventListener(Event.ENTER_FRAME, CallLaterUtil.callLaterObject_enterFrameHandler);
 		}
 

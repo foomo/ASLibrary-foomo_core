@@ -106,5 +106,16 @@ package org.foomo.utils
 			for (var i:int = 0; i < rest.length; ++i) string = string.replace( "{"+i+"}", rest[i]);
 			return string;
 		}
+
+		/**
+		 * @param string subject
+		 * @param p partial to search for
+		 * @param repl to replace with
+		 * @return replaces string
+		 */
+		public static function replaceAll(string:String, p:*, repl:*):String
+		{
+			return string.split(p).join(repl);
+		}
 	}
 }
