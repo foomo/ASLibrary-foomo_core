@@ -62,9 +62,19 @@ package org.foomo.utils
 		}
 
 		/**
+		 * @param item Item to be removed
+		 * @param source Source containing the item
+		 * @return Array of removed items
+		 */
+		public static function remove(item:*, source:Array):Array
+		{
+			return source.splice(source.indexOf(item), 1);
+		}
+
+		/**
 		 * Removes all items from an array
 		 */
-		public static function removeAll(source:Array):*
+		public static function removeAll(source:Array):Array
 		{
 			return source.splice(0, source.length);
 		}
