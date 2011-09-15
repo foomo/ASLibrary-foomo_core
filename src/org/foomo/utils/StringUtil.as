@@ -32,9 +32,9 @@ package org.foomo.utils
 		/**
 		 * MyString -> myString
 		 */
-		public static function lcFirst(string:String):String
+		public static function lcFirst(string:Object):String
 		{
-			return string.substr(0, 1).toLowerCase() + string.substr(1);
+			return string.toString().substr(0, 1).toLowerCase() + string.toString().substr(1);
 		}
 
 		/**
@@ -48,30 +48,43 @@ package org.foomo.utils
 		/**
 		 * Prepend sth before a given string x times
 		 */
-		public static function prepend(string:String, value:String, repeat:uint=1):String
+		public static function prepend(string:Object, value:Object, repeat:uint=1):String
 		{
-			for (var i:int=0; i<repeat; i++) string = value + string
-			return string;
+			for (var i:int=0; i<repeat; i++) string = value.toString() + string.toString();
+			return string.toString();
+		}
+
+		/**
+		 * @param string String to be padded
+		 * @param length Length of the string
+		 * @param value String to be padded on
+		 * @param append If true value will be appended instead of prepended
+		 * @return padded string
+		 */
+		public static function pad(string:Object, length:uint, value:Object, append:Boolean=false):String
+		{
+			while(string.toString().length < length) string = (append) ? StringUtil.append(string, value) : StringUtil.prepend(string, value);
+			return string.toString();
 		}
 
 		/**
 		 * Append sth before a given string x times
 		 */
-		public static function append(string:String, value:String, repeat:uint=1):String
+		public static function append(string:Object, value:Object, repeat:uint=1):String
 		{
-			for (var i:int=0; i<repeat; i++) string += value;
-			return string;
+			for (var i:int=0; i<repeat; i++) string += value.toString();
+			return string.toString();
 		}
 
 		/**
 		 * myString => ['my', 'String']
 		 */
-		public static function camelCaseSplit(string:String):Array
+		public static function camelCaseSplit(string:Object):Array
 		{
 			var j:int = 0;
 			var ret:Array = [];
-			for (var i:int=0; i<string.length; i++) {
-				var char:String = string.charAt(i);
+			for (var i:int=0; i<string.toString().length; i++) {
+				var char:String = string.toString().charAt(i);
 				var charUpper:String = char.toUpperCase();
 				if (char == charUpper) j++;
 				if (!ret[j]) ret[j] = '';
@@ -83,28 +96,28 @@ package org.foomo.utils
 		/**
 		 * myString => MY_STRING
 		 */
-		public static function camelCaseToUpperCase(string:String, seperator:String='_'):String
+		public static function camelCaseToUpperCase(string:Object, seperator:Object='_'):String
 		{
-			return StringUtil.camelCaseSplit(string).join(seperator).toUpperCase();
+			return StringUtil.camelCaseSplit(string.toString()).join(seperator.toString()).toUpperCase();
 		}
 
 		/**
 		 * myString => my_string
 		 */
-		public static function camelCaseToLowerCase(string:String, seperator:String='_'):String
+		public static function camelCaseToLowerCase(string:Object, seperator:Object='_'):String
 		{
-			return StringUtil.camelCaseSplit(string).join(seperator).toLowerCase();
+			return StringUtil.camelCaseSplit(string.toString()).join(seperator.toString()).toLowerCase();
 		}
 
 		/**
 		 * @todo: remove the array check
 		 * usage: StringUtilss.substitue('my {0} string', ['foobar']);
 		 */
-		public static function substitue(string:String, ... rest):String
+		public static function substitue(string:Object, ... rest):String
 		{
 			if (rest.length == 1 && rest[0] is Array) rest = rest[0];
-			for (var i:int = 0; i < rest.length; ++i) string = string.replace( "{"+i+"}", rest[i]);
-			return string;
+			for (var i:int = 0; i < rest.length; ++i) string = string.toString().replace( "{"+i+"}", rest[i]);
+			return string.toString();
 		}
 
 		/**
@@ -113,9 +126,9 @@ package org.foomo.utils
 		 * @param repl to replace with
 		 * @return replaces string
 		 */
-		public static function replaceAll(string:String, p:*, repl:*):String
+		public static function replaceAll(string:Object, p:*, repl:*):String
 		{
-			return string.split(p).join(repl);
+			return string.toString().split(p).join(repl);
 		}
 	}
 }
