@@ -16,6 +16,8 @@
  */
 package org.foomo.utils
 {
+	import flash.system.Capabilities;
+	import flash.system.System;
 	import flash.utils.describeType;
 	import flash.utils.getTimer;
 
@@ -92,6 +94,7 @@ package org.foomo.utils
 		 */
 		public static function getStackTrace(startIndex:int=0, endIndex:int=-1):String
 		{
+			if (!Capabilities.isDebugger) return '';
 			var stackTrace:String	= '';
 			var stackData:Array		= DebugUtil.getStackTraceData(startIndex, endIndex);
 			while (stackData.length > 0) stackTrace += stackData.shift() + '\n';
