@@ -90,6 +90,38 @@ package org.foomo.core
 			return this.serverUrl + this.getModuleHtdocsVarPath(moduleName);
 		}
 
+		[Bindable(event="change")]
+		public function getServiceEndPointPath(moduleName:String, endPoint:String='frontend'):String
+		{
+			return this.getModuleHtdocsPath(moduleName) + '/services/' + endPoint + '.php/Foomo.Services.RPC/serve';
+		}
+
+		[Bindable(event="change")]
+		public function getServiceEndPointUrl(moduleName:String, endPoint:String='frontend'):String
+		{
+			return this.serverUrl + this.getServiceEndPointPath(moduleName, endPoint);
+		}
+
+		//-----------------------------------------------------------------------------------------
+		// ~ Protected methods
+		//-----------------------------------------------------------------------------------------
+
+		/**
+		 * @param endPointUrl the handling .php file
+		 * @param className the controllers identifier
+		 * @param actionName the action name i.e. "getContent"
+		 * @param parms name => value i.e. "contentId" => "209234fkkflakgh4l4"
+		 */
+		protected function getControllerHelperUrl(endPointUrl:String, className:String, actionName:String='actionDefault', parms:Object=null):String
+		{
+			var data:Array = [];
+			for (var key:String in parms) {
+				if (parms[key] == null || parms[key] == '') continue;
+				data.push(key + '=' + parms[key]);
+			}
+			return endPointUrl + '?class=' + className + '&action=' + actionName + '&' + data.join('&');
+		}
+
 		//-----------------------------------------------------------------------------------------
 		// ~ Public static methods
 		//-----------------------------------------------------------------------------------------
@@ -116,6 +148,21 @@ package org.foomo.core
 		public static function getModuleHtdocsVarUrl(moduleName:String, serverUrl:String=null, foomoPath:String=null):String
 		{
 			return Foomo.getInstance(serverUrl, foomoPath).getModuleHtdocsVarUrl(moduleName);
+		}
+
+		//-----------------------------------------------------------------------------------------
+		// ~ Protected static methods
+		//-----------------------------------------------------------------------------------------
+
+		/**
+		 * @param endPointUrl the handling .php file
+		 * @param className the controllers identifier
+		 * @param actionName the action name i.e. "getContent"
+		 * @param rest name => value i.e. "contentId", 209234fkkflakgh4l4, ...
+		 */
+		protected static function getControllerHelperUrl(endPointUrl:String, className:String, actionName:String='default', parms:Object=null, serverUrl:String=null, foomoPath:String=null):String
+		{
+			return Foomo.getInstance(serverUrl, foomoPath).getControllerHelperUrl(endPointUrl, className, actionName, parms);
 		}
 	}
 }
