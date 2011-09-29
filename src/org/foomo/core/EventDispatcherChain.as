@@ -24,6 +24,8 @@ package org.foomo.core
 	import flash.utils.flash_proxy;
 
 	import org.foomo.managers.LogManager;
+	import org.foomo.managers.MemoryMananager;
+	import org.foomo.memory.IUnload;
 	import org.foomo.utils.ClassUtil;
 	import org.foomo.utils.ObjectUtil;
 	import org.foomo.utils.StringUtil;
@@ -36,7 +38,7 @@ package org.foomo.core
 	 * @license http://www.gnu.org/licenses/lgpl.txt
 	 * @author  franklin <franklin@weareinteractive.com>
 	 */
-	dynamic public class EventDispatcherChain extends Proxy
+	dynamic public class EventDispatcherChain extends Proxy implements IUnload
 	{
 		//-----------------------------------------------------------------------------------------
 		// ~ Variables
@@ -134,6 +136,7 @@ package org.foomo.core
 			fnc = function(event:Event):void {
 				if (LogManager.isDebug()) LogManager.debug(instance, 'Chaining on event {0}::{1} :: {2}', ClassUtil.getQualifiedName(event.target), type,  ClassUtil.getQualifiedName(dispatcher));
 				newInstance.setDispatcher(dispatcher, newInstance.extractArgs(event, ClassUtil.getConstructorParameters(dispatcher).length, eventArgs, rest));
+				// @todo Unloading at this point means that you can actually only chain one operation to anothor
 				instance.unload();
 			}
 
@@ -147,6 +150,17 @@ package org.foomo.core
 		public function unloadOnEvent(type:String):EventDispatcherChain
 		{
 			return this.addDispatcherEventListener(type, this.unloadHandler);
+		}
+
+		/**
+		 *
+		 */
+		public function unload():void
+		{
+			this.removeAllListeners();
+			this._pendingEventListeners = null;
+			MemoryMananager.unload(this._dispatcher);
+			this._dispatcher = null;
 		}
 
 		//-----------------------------------------------------------------------------------------
@@ -193,22 +207,12 @@ package org.foomo.core
 		 */
 		private function unloadHandler(event:Event):void
 		{
-			this.unload();
+			MemoryMananager.unload(this);
 		}
 
 		//-----------------------------------------------------------------------------------------
 		// ~ Private methods
 		//-----------------------------------------------------------------------------------------
-
-		/**
-		 *
-		 */
-		flash_proxy function unload():void
-		{
-			this.removeAllDispatcherListeners();
-			this._pendingEventListeners = null;
-			this._dispatcher = null;
-		}
 
 		/**
 		 *
