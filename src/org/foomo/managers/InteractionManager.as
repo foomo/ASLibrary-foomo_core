@@ -16,20 +16,30 @@
  */
 package org.foomo.managers
 {
+	import flash.display.DisplayObject;
+	import flash.display.Stage;
+
 	import org.foomo.core.Managers;
+
+	[Event(name="change",type="flash.events.Event")]
 
 	/**
 	 * @link    http://www.foomo.org
 	 * @license http://www.gnu.org/licenses/lgpl.txt
 	 * @author  franklin <franklin@weareinteractive.com>
 	 */
-	public class SessionManager
+	public class InteractionManager
 	{
 		//-----------------------------------------------------------------------------------------
 		// ~ Static initialization
 		//-----------------------------------------------------------------------------------------
 
-		Managers.registerClass('org.foomo.flash.managers::ISharedObjectManager', SessionManagerImpl);
+		Managers.registerClass('org.foomo.flash.managers::IInteractionManager', IInteractionManager);
+
+		//-----------------------------------------------------------------------------------------
+		// ~ Variables
+		//-----------------------------------------------------------------------------------------
+
 
 		//-----------------------------------------------------------------------------------------
 		// ~ Static variables
@@ -38,19 +48,19 @@ package org.foomo.managers
 		/**
 		 * @private
 		 */
-		private static var _impl:ISessionManager;
+		private static var _impl:IInteractionManager;
 
 		//-----------------------------------------------------------------------------------------
 		// ~ Singleton instance
 		//-----------------------------------------------------------------------------------------
 
-		private static function get impl():ISessionManager
+		private static function get impl():IInteractionManager
 		{
-			if (!_impl) _impl = ISessionManager(Managers.getInstance("org.foomo.flash.managers::ISharedObjectManager"));
+			if (!_impl) _impl = IInteractionManager(Managers.getInstance("org.foomo.flash.managers::IInteractionManager"));
 			return _impl;
 		}
 
-		public static function getInstance():ISessionManager
+		public static function getInstance():IInteractionManager
 		{
 			return impl;
 		}
@@ -59,44 +69,24 @@ package org.foomo.managers
 		// ~ Public static methods
 		//-----------------------------------------------------------------------------------------
 
-		public static function get sessionId():String
+		public static function init(stage:Stage, delay:int):void
 		{
-			return impl.sessionId
+			impl.init(stage, delay);
 		}
 
-		public static  function get clientId():String
+		public static function get idle():Boolean
 		{
-			return impl.clientId;
+			return impl.idle;
 		}
 
-		public static function get localIsAvailable():Boolean
+		public static function addEventListener(type:String, listener:Function, useCapture:Boolean=false, priority:int=0, useWeakReference:Boolean=false):void
 		{
-			return impl.localIsAvailable;
+			impl.addEventListener(type, listener, useCapture, priority, useWeakReference);
 		}
 
-		public static function setLocalData(key:Object, value:*):*
+		public static function removeEventListener(type:String, listener:Function, useCapture:Boolean=false):void
 		{
-			return impl.setLocalData(key, value);
-		}
-
-		public static function getLocalData(key:Object, defaultValue:*=null):*
-		{
-			return impl.getLocalData(key, defaultValue);
-		}
-
-		public static function removeLocalData(key:Object):*
-		{
-			return impl.removeLocalData(key);
-		}
-
-		public static function flushLocal():String
-		{
-			return impl.flushLocal()
-		}
-
-		public static function clearLocal():void
-		{
-			return impl.clearLocal();
+			impl.removeEventListener(type, listener, useCapture);
 		}
 	}
 }
