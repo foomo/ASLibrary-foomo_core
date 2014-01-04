@@ -16,6 +16,7 @@
  */
 package org.foomo.utils
 {
+	import flexunit.framework.Assert;
 
 
 	/**
@@ -53,17 +54,13 @@ package org.foomo.utils
 		// ~ Test methods
 		//-----------------------------------------------------------------------------------------
 
-		/*
 		// use array.indexOf()
 		[Test]
-		public function testGetItemIndex():void
+		public function testRemoveAll():void
 		{
-			var obj:Object = {foo:'bar'}
-			var data:Array = ['foo', 13, obj];
-			Assert.assertEquals(0, ArrayUtil.getItemIndex('foo', data));
-			Assert.assertEquals(1, ArrayUtil.getItemIndex(13, data));
-			Assert.assertEquals(2, ArrayUtil.getItemIndex(obj, data));
+			var data:Array = ['foo', 13, true];
+			Assert.assertEquals(3, ArrayUtil.removeAll(data).length);
+			Assert.assertEquals(0, data.length);
 		}
-		*/
 	}
 }

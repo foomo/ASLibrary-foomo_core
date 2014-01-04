@@ -74,7 +74,7 @@ package org.foomo.managers
 		[Test]
 		public function testGet_localIsAvailable():void
 		{
-			Assert.assertFalse(SessionManager.localIsAvailable);
+			Assert.assertTrue(SessionManager.localIsAvailable);
 		}
 
 		[Test(order=1)]
@@ -94,20 +94,20 @@ package org.foomo.managers
 		public function testGet_clientId():void
 		{
 			Assert.assertEquals(SessionManager.clientId.length, 36);
-			Assert.assertTrue(SessionManager.clientId == SessionManager.sessionId);
+			Assert.assertFalse(SessionManager.clientId == SessionManager.sessionId);
 			_clientId = SessionManager.clientId;
 		}
 
 		[Test(order=4)]
 		public function testGet_clientIdAgain():void
 		{
-			Assert.assertTrue(_clientId == SessionManager.clientId);
+			Assert.assertEquals(_clientId, SessionManager.clientId);
 		}
 
 		[Test]
 		public function testFlushLocal():void
 		{
-			Assert.assertNull(SessionManager.flushLocal());
+			Assert.assertEquals('flushed', SessionManager.flushLocal());
 		}
 
 		[Test]

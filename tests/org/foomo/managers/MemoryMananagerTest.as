@@ -46,6 +46,19 @@ package org.foomo.managers
 		{
 			Assert.assertNull(MemoryMananager.gc());
 		}
+		
+		[Test]
+		public function testRemoveUnloader():void
+		{
+			var parent:MovieClip = new MovieClip;
+			var child:MovieClip = new MovieClip;
+			parent.addChild(child);
+			
+			MemoryMananager.removeUnloader(DisplayObjectContainer);
+			
+			MemoryMananager.unload(parent);
+			Assert.assertEquals(parent.getChildAt(0), child);
+		}
 
 		[Test]
 		public function testAddUnloader():void
@@ -53,28 +66,15 @@ package org.foomo.managers
 			var parent:MovieClip = new MovieClip;
 			var child:MovieClip = new MovieClip;
 			parent.addChild(child);
-
-			MemoryMananager.unload(parent);
-			Assert.assertEquals(parent.getChildAt(0), child);
-
-			MemoryMananager.addUnloader(DisplayObjectContainer, new DisplayObjectContainerUnloader);
-
-			MemoryMananager.unload(parent);
-			Assert.assertEquals(parent.numChildren, 0);
-		}
-
-		[Test]
-		public function testRemoveUnloader():void
-		{
-			var parent:MovieClip = new MovieClip;
-			var child:MovieClip = new MovieClip;
-			parent.addChild(child);
-
-			MemoryMananager.addUnloader(DisplayObjectContainer, new DisplayObjectContainerUnloader);
+			
 			MemoryMananager.removeUnloader(DisplayObjectContainer);
-
+			
 			MemoryMananager.unload(parent);
 			Assert.assertEquals(parent.getChildAt(0), child);
+			MemoryMananager.addUnloader(DisplayObjectContainer, new DisplayObjectContainerUnloader);
+
+			MemoryMananager.unload(parent);
+			Assert.assertEquals(0, parent.numChildren);
 		}
 
 		[Test]

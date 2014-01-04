@@ -56,7 +56,7 @@ package org.foomo.utils
 		[Test]
 		public function testGetQualifiedName():void
 		{
-			Assert.assertEquals(ClassUtil.getQualifiedName(ClassUtilTest), 'org.foomo.flash.utils.ClassUtilTest');
+			Assert.assertEquals(ClassUtil.getQualifiedName(ClassUtilTest), 'org.foomo.utils.ClassUtilTest');
 		}
 	}
 }
