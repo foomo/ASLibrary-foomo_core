@@ -16,18 +16,19 @@
  */
 package org.foomo.managers
 {
-	import org.foomo.memory.IUnloader;
+	import flash.display.Stage;
+	import flash.events.IEventDispatcher;
+
+	[Event(name="change",type="flash.events.Event")]
 
 	/**
 	 * @link    http://www.foomo.org
 	 * @license http://www.gnu.org/licenses/lgpl.txt
 	 * @author  franklin <franklin@weareinteractive.com>
 	 */
-	public interface IMemoryManager
+	public interface IInteractionManager extends IEventDispatcher
 	{
-		function gc():void;
-		function unload(obj:Object):void;
-		function addUnloader(type:*, unloader:IUnloader):void;
-		function removeUnloader(type:*):void;
+		function init(stage:Stage, delay:int):void;
+		function get idle():Boolean;
 	}
 }

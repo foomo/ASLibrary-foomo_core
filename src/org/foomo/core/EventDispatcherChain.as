@@ -18,11 +18,9 @@ package org.foomo.core
 {
 	import flash.events.Event;
 	import flash.events.IEventDispatcher;
-	import flash.sampler.getSavedThis;
 	import flash.utils.Proxy;
-	import flash.utils.describeType;
 	import flash.utils.flash_proxy;
-
+	
 	import org.foomo.managers.LogManager;
 	import org.foomo.managers.MemoryMananager;
 	import org.foomo.memory.IUnload;
@@ -41,15 +39,25 @@ package org.foomo.core
 	dynamic public class EventDispatcherChain extends Proxy implements IUnload
 	{
 		//-----------------------------------------------------------------------------------------
+		// ~ Constants
+		//-----------------------------------------------------------------------------------------
+		
+		public static const LOCAL_VAR:String = '@local';
+		
+		//-----------------------------------------------------------------------------------------
 		// ~ Variables
 		//-----------------------------------------------------------------------------------------
 
 		/**
-		 *
+		 * Storage for local variables 
+		 */
+		private static var _variables:Object;
+		/**
+		 * Current dispatch instance
 		 */
 		private var _dispatcher:IEventDispatcher;
 		/**
-		 *
+		 * Pending event listeners to be attached
 		 */
 		private var _pendingEventListeners:Array = [];
 		/**
@@ -83,14 +91,21 @@ package org.foomo.core
 
 			fnc = function(event:Event):void {
 				if (LogManager.isDebug()) LogManager.debug(instance, 'Adding callback on event {0}::{1} :: callback({2})', ClassUtil.getQualifiedName(event.target), type, customArgs);
-				callback.apply(instance, instance.extractArgs(event, callback.length, eventArgs, customArgs));
+				callback.apply(instance, instance.extractArgs(event, callback.length, eventArgs, instance.replaceCustomArgsVariables(customArgs)));
 			}
 
 			return this.addDispatcherEventListener(type, fnc);
 		}
 
 		/**
-		 *
+		 * Set a host object's property on the given event type
+		 * 
+		 * @param type The event type
+		 * @param host The property host
+		 * @param property The property name
+		 * @param eventArgs Event parameters that should be passed as arguements to the new chain instance
+		 * @param customArgs Custom arguements to be passed to the new chain instance
+		 * @return The new chain instance
 		 */
 		public function setOnEvent(type:String, host:Object, property:String, eventArg:String=null, customArg:*=null):EventDispatcherChain
 		{
@@ -98,7 +113,7 @@ package org.foomo.core
 			var instance:EventDispatcherChain = this;
 
 			fnc = function(event:Event):void {
-				var value:* = (eventArg) ? ObjectUtil.resolveValue(event, eventArg) : customArg;
+				var value:* = (eventArg) ? ObjectUtil.resolveValue(event, eventArg) : instance.replaceCustomArgVariable(customArg);
 				if (LogManager.isDebug()) LogManager.debug(instance, 'Setting value on event {0}::{1} :: {2}::{3} = {4}', ClassUtil.getQualifiedName(event.target), type, ClassUtil.getQualifiedName(host), property, value);
 				host[property] = value;
 			}
@@ -123,9 +138,15 @@ package org.foomo.core
 		}
 
 		/**
-		 *
-		 */
-		public function chainOn(type:String, dispatcher:Class, eventArgs:Array=null, ... rest):EventDispatcherChain
+		 * Chain a new dispatcher instance on the given event type
+		 * 
+		 * @param type The event type
+		 * @param dispatcher The new dispatcher instance class
+		 * @param eventArgs Event parameters that should be passed as arguements to the new chain instance
+		 * @param customArgs Custom arguements to be passed to the new chain instance
+		 * @return The new chain instance
+		 */		
+		public function chainOn(type:String, dispatcher:Class, eventArgs:Array=null, ... customArgs):EventDispatcherChain
 		{
 			var fnc:Function;
 			var clazz:Class = ClassUtil.getClass(this);
@@ -135,7 +156,7 @@ package org.foomo.core
 
 			fnc = function(event:Event):void {
 				if (LogManager.isDebug()) LogManager.debug(instance, 'Chaining on event {0}::{1} :: {2}', ClassUtil.getQualifiedName(event.target), type,  ClassUtil.getQualifiedName(dispatcher));
-				newInstance.setDispatcher(dispatcher, newInstance.extractArgs(event, ClassUtil.getConstructorParameters(dispatcher).length, eventArgs, rest));
+				newInstance.setDispatcher(dispatcher, newInstance.extractArgs(event, ClassUtil.getConstructorParameters(dispatcher).length, eventArgs, instance.replaceCustomArgsVariables(customArgs)));
 				// @todo Unloading at this point means that you can actually only chain one operation to anothor
 				instance.unload();
 			}
@@ -145,7 +166,33 @@ package org.foomo.core
 		}
 
 		/**
-		 *
+		 * Store a local variable for later use for given event type
+		 * 
+		 * @param type The Event type
+		 * @param name The local variable name
+		 * @param eventArg Name of the event property to read in
+		 * @param customArg Custom variable value
+		 * @return The current chain instance
+		 */
+		public function storeVariable(type:String, name:String, eventArg:String=null, customArg:*=null):EventDispatcherChain
+		{
+			var fnc:Function
+			var instance:EventDispatcherChain = this;
+			
+			fnc = function(event:Event):void {
+				var value:* = (eventArg) ? ObjectUtil.resolveValue(event, eventArg) : instance.replaceCustomArgVariable(customArg);
+				if (LogManager.isDebug()) LogManager.debug(instance, 'Storing variable on event {0}::{1} :: {2} = {3}', ClassUtil.getQualifiedName(event.target), type, name, value);
+				EventDispatcherChain._variables[name] = value;
+			}			
+			
+			return this.addDispatcherEventListener(type, fnc);
+		}
+	
+		/**
+		 * Unload the chain on given event type
+		 * 
+		 * @param type The Event type
+		 * @return The current chain instance
 		 */
 		public function unloadOnEvent(type:String):EventDispatcherChain
 		{
@@ -153,7 +200,7 @@ package org.foomo.core
 		}
 
 		/**
-		 *
+		 * Unload the chain
 		 */
 		public function unload():void
 		{
@@ -279,7 +326,40 @@ package org.foomo.core
 			obj = null;
 			return this;
 		}
+		
+		/**
+		 * Replace an array of values with local variables
+		 * 
+		 * @param values The array of values to be replaced 
+		 * @return The replaced values array
+		 */		
+		flash_proxy function replaceCustomArgsVariables(values:Array):Array
+		{
+			for (var i:int=0; i < values.length; i++) values[i] = this.replaceCustomArgVariable(values[i])
+			return values;
+		}
+		
+		/**
+		 * Replace a value with a local variable if required
+		 * 
+		 * @param value The value to be replaced
+		 * @return The replaced value
+		 */		
+		flash_proxy function replaceCustomArgVariable(value:*):*
+		{
+			if (!value || !(value is String) || String(value).substr(0, 6) != EventDispatcherChain.LOCAL_VAR) return value;
+			return ObjectUtil.resolveValue(EventDispatcherChain._variables, String(value).substr(EventDispatcherChain.LOCAL_VAR.length + 1));
+		}
 
+		//-----------------------------------------------------------------------------------------
+		// ~ Protected static methods
+		//-----------------------------------------------------------------------------------------
+	
+		protected static function resetVariables():void
+		{
+			EventDispatcherChain._variables = {}
+		}
+		
 		//-----------------------------------------------------------------------------------------
 		// ~ Public static methods
 		//-----------------------------------------------------------------------------------------
@@ -291,6 +371,7 @@ package org.foomo.core
 		{
 			if (LogManager.isDebug()) LogManager.debug(EventDispatcherChain, 'Creating EventDispatcherChain :: {0}', ClassUtil.getQualifiedName(dispatcher));
 			var ret:EventDispatcherChain = new EventDispatcherChain();
+			EventDispatcherChain.resetVariables();
 			return ret.setDispatcher(dispatcher, args);
 		}
 	}

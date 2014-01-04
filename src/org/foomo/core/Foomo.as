@@ -99,7 +99,7 @@ package org.foomo.core
 		[Bindable(event="change")]
 		public function getServiceEndPointUrl(moduleName:String, endPoint:String='frontend'):String
 		{
-			return this.serverUrl + this.getServiceEndPointPath(moduleName, endPoint);
+			return this.serverUrl + '/' + this.getServiceEndPointPath(moduleName, endPoint);
 		}
 
 		//-----------------------------------------------------------------------------------------
